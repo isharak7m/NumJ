@@ -1,11 +1,11 @@
-# Sonatype Central Portal credentials (generate at https://central.sonatype.com)
+# Sonatype Central Portal deployment token (generate at https://central.sonatype.com)
 sonatypeUser=your-token-username
 sonatypePassword=your-token-password
 
 # GPG signing (generate with: gpg --full-gen-key)
-signing.keyId=ABC123DEF456
+signing.keyId=<last-8-chars-of-key-id>
 signing.password=your-gpg-passphrase
-signing.secretKeyRingFile=C:/Users/you/.gnupg/secring.gpg
+signing.secretKeyRingFile=C:/projects/numj/secring.gpg
 
-# Release version (remove -SNAPSHOT for release)
+# Release version
 VERSION=0.1.0

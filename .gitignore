@@ -35,6 +35,11 @@ replay_pid*
 # Coverage
 build/
 
+# GPG secrets
+secring.gpg
+private-key.asc
+public-key.asc
+
 # Temp
 tmp/
 temp/

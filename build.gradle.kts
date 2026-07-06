@@ -52,6 +52,10 @@ tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
     options.memberLevel = JavadocMemberLevel.PUBLIC
     (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    (options as StandardJavadocDocletOptions).addBooleanOption("-enable-preview", true)
+    (options as StandardJavadocDocletOptions).addStringOption("-source", "21")
+    (options as StandardJavadocDocletOptions).addStringOption("-add-modules", "jdk.incubator.vector")
+    isFailOnError = false
 }
 
 jacoco {
@@ -74,15 +78,10 @@ spotless {
     }
 }
 
-val javadocJar by tasks.existing(Jar::class) { archiveClassifier.set("javadoc") }
-val sourcesJar by tasks.existing(Jar::class) { archiveClassifier.set("sources") }
-
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifact(javadocJar)
-            artifact(sourcesJar)
             pom {
                 name.set("JNumj")
                 description.set("Numerical computing library for the JVM, inspired by NumPy")
@@ -105,16 +104,6 @@ publishing {
                     developerConnection.set("scm:git:ssh://github.com/isharak7m/NumJ.git")
                     url.set("https://github.com/isharak7m/NumJ")
                 }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = "central"
-            url = uri("https://central.sonatype.com/api/v1/publisher/io.github.isharak7m/upload")
-            credentials {
-                username = properties["sonatypeUser"] as? String ?: ""
-                password = properties["sonatypePassword"] as? String ?: ""
             }
         }
     }
