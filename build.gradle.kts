@@ -7,8 +7,8 @@ plugins {
     id("com.diffplug.spotless") version "6.25.0"
 }
 
-group = "io.github.jnumj"
-version = properties["VERSION"] as? String ?: "0.1.0-SNAPSHOT"
+group = "io.github.isharak7m"
+version = properties["VERSION"] as? String ?: "0.1.0"
 
 java {
     toolchain {
@@ -111,7 +111,7 @@ publishing {
     repositories {
         maven {
             name = "central"
-            url = uri("https://central.sonatype.com/api/v1/publisher/io.github.jnumj/upload")
+            url = uri("https://central.sonatype.com/api/v1/publisher/io.github.isharak7m/upload")
             credentials {
                 username = properties["sonatypeUser"] as? String ?: ""
                 password = properties["sonatypePassword"] as? String ?: ""

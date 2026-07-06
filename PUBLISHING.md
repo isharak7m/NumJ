@@ -95,7 +95,7 @@ I'll update the build file with the correct publishing configuration — the cur
 Within ~15 minutes, it's live on Maven Central. Anyone can use:
 
 ```kotlin
-dependencies { implementation("io.github.jnumj:jnumj:0.1.0") }
+dependencies { implementation("io.github.isharak7m:jnumj:0.1.0") }
 ```
 
 ### 8. Future Updates
