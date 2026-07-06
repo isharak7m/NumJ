@@ -1,14 +1,14 @@
 plugins {
     id("java-library")
     id("maven-publish")
+    id("signing")
     id("jacoco")
     id("me.champeau.jmh") version "0.7.2"
     id("com.diffplug.spotless") version "6.25.0"
-    // id("net.ltgt.errorprone") version "4.0.1"
 }
 
 group = "io.github.jnumj"
-version = "0.1.0-SNAPSHOT"
+version = properties["VERSION"] as? String ?: "0.1.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -48,12 +48,6 @@ tasks.withType<Test> {
     jvmArgs("--enable-preview", "--add-modules=jdk.incubator.vector")
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-    maxHeapSize = "4g"
-    jvmArgs("--add-modules=jdk.incubator.vector")
-}
-
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
     options.memberLevel = JavadocMemberLevel.PUBLIC
@@ -80,28 +74,54 @@ spotless {
     }
 }
 
+val javadocJar by tasks.existing(Jar::class) { archiveClassifier.set("javadoc") }
+val sourcesJar by tasks.existing(Jar::class) { archiveClassifier.set("sources") }
+
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("mavenJava") {
             from(components["java"])
+            artifact(javadocJar)
+            artifact(sourcesJar)
             pom {
                 name.set("JNumj")
                 description.set("Numerical computing library for the JVM, inspired by NumPy")
-                url.set("https://github.com/jnumj/jnumj")
+                url.set("https://github.com/isharak7m/NumJ")
                 licenses {
                     license {
-                        name.set("Apache License 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("isharak7m")
+                        name.set("Isharak7m")
+                        email.set("isharak7m@users.noreply.github.com")
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/jnumj/jnumj.git")
-                    developerConnection.set("scm:git:ssh://github.com/jnumj/jnumj.git")
-                    url.set("https://github.com/jnumj/jnumj")
+                    connection.set("scm:git:git://github.com/isharak7m/NumJ.git")
+                    developerConnection.set("scm:git:ssh://github.com/isharak7m/NumJ.git")
+                    url.set("https://github.com/isharak7m/NumJ")
                 }
             }
         }
     }
+    repositories {
+        maven {
+            name = "central"
+            url = uri("https://central.sonatype.com/api/v1/publisher/io.github.jnumj/upload")
+            credentials {
+                username = properties["sonatypeUser"] as? String ?: ""
+                password = properties["sonatypePassword"] as? String ?: ""
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }
 
 jmh {

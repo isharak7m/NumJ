@@ -3,6 +3,9 @@
 build/
 !gradle/wrapper/gradle-wrapper.jar
 
+# Gradle properties (contains secrets)
+gradle.properties
+
 # IDE
 .idea/
 *.iml
