@@ -43,3 +43,7 @@ public-key.asc
 # Temp
 tmp/
 temp/
+
+# Example project build
+example/.gradle/
+example/build/
