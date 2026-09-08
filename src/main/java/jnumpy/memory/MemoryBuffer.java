@@ -10,7 +10,7 @@ public sealed interface MemoryBuffer permits HeapMemoryBuffer.ByteBuffer, HeapMe
 
     DType dtype();
     long size();
-    boolean isHeap();
+    boolean isHeap();   
     boolean isOffHeap();
     boolean isContiguous();
     MemoryBuffer slice(long offset, long length);

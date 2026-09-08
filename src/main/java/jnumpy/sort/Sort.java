@@ -3,6 +3,7 @@ package jnumpy.sort;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.util.Util;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -21,17 +22,17 @@ public final class Sort {
                     idx[d] = (int) (remaining % a.shape()[d]);
                     remaining /= a.shape()[d];
                 }
-                data[(int) i] = a.getDouble(idx);
+                data[(int) i] = Util.readElement(a, idx);
             }
             Arrays.sort(data);
-            NDArray result = NDArray.create(a.shape(), DType.FLOAT64);
+            NDArray result = NDArray.create(a.shape(), a.dtype());
             for (long i = 0; i < n; i++) {
                 long remaining = i;
                 for (int d = a.ndim() - 1; d >= 0; d--) {
                     idx[d] = (int) (remaining % a.shape()[d]);
                     remaining /= a.shape()[d];
                 }
-                result.setDouble(data[(int) i], idx);
+                Util.writeElement(result, data[(int) i], idx);
             }
             return result;
         }
@@ -59,12 +60,12 @@ public final class Sort {
                 }
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    slice[d] = result.getDouble(indices);
+                    slice[d] = Util.readElement(result, indices);
                 }
                 Arrays.sort(slice);
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    result.setDouble(slice[d], indices);
+                    Util.writeElement(result, slice[d], indices);
                 }
             }
         }
@@ -98,7 +99,7 @@ public final class Sort {
                 Integer[] order = new Integer[dimSize];
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    slice[d] = a.getDouble(indices);
+                    slice[d] = Util.readElement(a, indices);
                     order[d] = d;
                 }
                 Arrays.sort(order, Comparator.comparingDouble(i -> slice[i]));
@@ -121,7 +122,7 @@ public final class Sort {
                 idx[d] = (int) (remaining % a.shape()[d]);
                 remaining /= a.shape()[d];
             }
-            data[(int) i] = a.getDouble(idx);
+            data[(int) i] = Util.readElement(a, idx);
         }
         Arrays.sort(data);
         int uniqueCount = 1;
@@ -141,7 +142,7 @@ public final class Sort {
         int lo = 0, hi = (int) n;
         while (lo < hi) {
             int mid = (lo + hi) >>> 1;
-            if (a.getDouble(mid) < v) lo = mid + 1;
+            if (Util.readBuffer(a.buffer(), a.dtype(), mid) < v) lo = mid + 1;
             else hi = mid;
         }
         return NDArray.create(new double[]{ lo });
@@ -172,13 +173,13 @@ public final class Sort {
                 }
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    slice[d] = result.getDouble(indices);
+                    slice[d] = Util.readElement(result, indices);
                 }
                 int k = kth < 0 ? kth + dimSize : kth;
                 int nth = quickSelect(slice, k, 0, dimSize - 1);
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    result.setDouble(slice[d], indices);
+                    Util.writeElement(result, slice[d], indices);
                 }
             }
         }

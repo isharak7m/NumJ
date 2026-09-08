@@ -138,7 +138,7 @@ public final class NDArray {
 
     public NDArray view() {
         return new NDArray(shape, strides, dtype, offset, buffer, true);
-    }
+    } 
 
     public NDArray reshape(int... newShape) {
         long newSize = 1;
@@ -311,7 +311,17 @@ public final class NDArray {
         for (long flat = 0; flat < result.size; flat++) {
             result.indices(flat, dstIdx);
             for (int r = 0; r < ndim; r++) srcIdx[r] = dstIdx[r] % shape[r];
-            result.buffer.setDouble(flat, getDouble(srcIdx));
+            long srcFlat = flatIndex(srcIdx);
+            switch (dtype) {
+                case DType.Float64Type ignored -> result.buffer.setDouble(flat, buffer.getDouble(srcFlat));
+                case DType.Float32Type ignored -> result.buffer.setFloat(flat, buffer.getFloat(srcFlat));
+                case DType.Int32Type ignored -> result.buffer.setInt(flat, buffer.getInt(srcFlat));
+                case DType.Int64Type ignored -> result.buffer.setLong(flat, buffer.getLong(srcFlat));
+                case DType.Int16Type ignored -> result.buffer.setShort(flat, buffer.getShort(srcFlat));
+                case DType.Int8Type ignored -> result.buffer.setByte(flat, buffer.getByte(srcFlat));
+                case DType.BoolType ignored -> result.buffer.setBool(flat, buffer.getBool(srcFlat));
+                default -> result.buffer.setDouble(flat, buffer.getDouble(srcFlat));
+            }
         }
         return result;
     }

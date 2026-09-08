@@ -35,9 +35,9 @@ dependencies {
 ## Quick Start
 
 ```java
-import jnumpy.Arrays;
-import jnumpy.NDArray;
-import static jnumpy.Arrays.*;
+import jnumpy.core.Arrays;
+import jnumpy.ndarray.NDArray;
+import static jnumpy.core.Arrays.*;
 
 public class Example {
     public static void main(String[] args) {
@@ -75,9 +75,35 @@ public class Example {
 
 ---
 
+## Package Structure
+
+| Package | Description |
+|---------|-------------|
+| `jnumpy.core` | Public API facade (`Arrays`) — static entry point for all operations |
+| `jnumpy.ndarray` | Core `NDArray` class |
+| `jnumpy.dtype` | Data type system (`DType`) |
+| `jnumpy.memory` | Heap and off-heap memory buffers |
+| `jnumpy.broadcast` | NumPy-style broadcasting |
+| `jnumpy.indexing` | Integer, slice, and fancy indexing |
+| `jnumpy.creation` | Array creation routines |
+| `jnumpy.ufunc` | Element-wise universal functions |
+| `jnumpy.manipulation` | Shape manipulation |
+| `jnumpy.linalg` | Linear algebra |
+| `jnumpy.statistics` | Statistical reductions |
+| `jnumpy.random` | Random number generation |
+| `jnumpy.fft` | Fast Fourier Transform |
+| `jnumpy.sort` | Sorting and searchsorted |
+| `jnumpy.search` | Search and set operations |
+| `jnumpy.string` | Vectorized string operations |
+| `jnumpy.io` | Binary and CSV file I/O |
+| `jnumpy.polynomial` | Polynomial fitting/evaluation |
+| `jnumpy.simd` | SIMD-accelerated vector math |
+| `jnumpy.parallel` | ForkJoin-based parallel iteration |
+| `jnumpy.util` | Miscellaneous utilities |
+
 ## Features
 
-### NDArray
+### NDArray (`jnumpy.ndarray`)
 N-dimensional array with support for:
 
 | DType | Description |
@@ -89,10 +115,10 @@ N-dimensional array with support for:
 | `BOOL` | Boolean |
 | `STRING` | String |
 
-### Array Creation
+### Array Creation (`jnumpy.creation`)
 `array`, `zeros`, `ones`, `full`, `empty`, `eye`, `identity`, `diag`, `diagflat`, `arange`, `linspace`, `logspace`, `geomspace`, `copy`, `fromFunction`, `ascontiguousarray`
 
-### Universal Functions
+### Universal Functions (`jnumpy.ufunc`)
 **Arithmetic**: `add`, `subtract`, `multiply`, `divide`, `mod`, `pow`, `negate`, `abs`
 
 **Trigonometric**: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`
@@ -107,28 +133,28 @@ N-dimensional array with support for:
 
 **Others**: `clip`, `where`, `isnan`, `isinf`, `isfinite`
 
-### Linear Algebra
+### Linear Algebra (`jnumpy.linalg`)
 `dot`, `inner`, `outer`, `cross`, `matmul`, `inv`, `det`, `solve`, `cholesky`, `lu`, `qr`, `svd`, `eigen`, `eigvals`, `norm`, `trace`
 
-### Statistics
+### Statistics (`jnumpy.statistics`)
 `min`, `max`, `mean`, `median`, `var`, `std`, `sum`, `prod`, `cumsum`, `cumprod`, `argmin`, `argmax`, `countNonzero`, `percentile`
 
-### Random
+### Random (`jnumpy.random`)
 `uniform`, `normal`, `beta`, `gamma`, `binomial`, `poisson`, `exponential`, `choice`, `randint`, `shuffle`, `permutation`
 
-### FFT
+### FFT (`jnumpy.fft`)
 `fft`, `ifft`, `fft2`, `ifft2`, `rfft`, `irfft`, `fftfreq`, `rfftfreq`
 
-### Array Manipulation
+### Array Manipulation (`jnumpy.manipulation`)
 `reshape`, `transpose`, `flatten`, `ravel`, `squeeze`, `expandDims`, `repeat`, `tile`, `flip`, `rot90`, `concatenate`, `hstack`, `vstack`, `columnStack`, `split`, `hsplit`, `vsplit`
 
-### Search & Sort
+### Search & Sort (`jnumpy.search`, `jnumpy.sort`)
 `argwhere`, `where`, `nonzero`, `extract`, `compress`, `intersect1d`, `union1d`, `setdiff1d`, `isin`, `sort`, `argsort`, `searchsorted`
 
-### String Operations
+### String Operations (`jnumpy.string`)
 `upper`, `lower`, `strip`, `replace`, `split`, `join`, `contains`, `startswith`, `endswith`
 
-### I/O
+### I/O (`jnumpy.io`)
 `fromfile`, `tofile`, `fromcsv`, `tocsv`
 
 ---

@@ -186,7 +186,7 @@ public final class Creation {
         return linspace(logStart, logStop, num).exp();
     }
 
-    public static NDArray meshgrid(NDArray x, NDArray y) {
+    public static NDArray[] meshgrid(NDArray x, NDArray y) {
         int nx = (int) x.size();
         int ny = (int) y.size();
         MemoryBuffer xBuf = MemoryBuffer.allocate(DType.FLOAT64, (long) nx * ny);
@@ -199,19 +199,13 @@ public final class Creation {
         }
         NDArray xResult = new NDArray(xBuf, new int[]{ ny, nx }, DType.FLOAT64, 'C');
         NDArray yResult = new NDArray(yBuf, new int[]{ ny, nx }, DType.FLOAT64, 'C');
-        return xResult; // Return X; caller can get Y separately
+        return new NDArray[]{ xResult, yResult };
     }
 
     public static NDArray fromFunction(IntToDoubleFunction f, int... shape) {
         long size = NDArray.sizeOfShape(shape);
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, size);
-        int[] indices = new int[shape.length];
         for (long i = 0; i < size; i++) {
-            long remaining = i;
-            for (int d = shape.length - 1; d >= 0; d--) {
-                indices[d] = (int) (remaining % shape[d]);
-                remaining /= shape[d];
-            }
             buf.setDouble(i, f.applyAsDouble((int) i));
         }
         return new NDArray(buf, shape, DType.FLOAT64, 'C');
@@ -222,8 +216,27 @@ public final class Creation {
     }
 
     public static NDArray fromBuffer(byte[] data, DType dtype) {
-        MemoryBuffer buf = MemoryBuffer.allocate(dtype, data.length / dtype.byteSize());
-        for (long i = 0; i < buf.size(); i++) buf.setByte(i, data[(int) i]);
+        int elemSize = dtype.byteSize();
+        if (elemSize <= 0) throw new IllegalArgumentException("fromBuffer does not support variable-size dtypes");
+        int numElements = data.length / elemSize;
+        MemoryBuffer buf = MemoryBuffer.allocate(dtype, numElements);
+        java.nio.ByteBuffer bb = java.nio.ByteBuffer.wrap(data).order(java.nio.ByteOrder.nativeOrder());
+        for (int i = 0; i < numElements; i++) {
+            switch (dtype) {
+                case DType.Int8Type ignored -> buf.setByte(i, bb.get());
+                case DType.Int16Type ignored -> buf.setShort(i, bb.getShort());
+                case DType.Int32Type ignored -> buf.setInt(i, bb.getInt());
+                case DType.Int64Type ignored -> buf.setLong(i, bb.getLong());
+                case DType.Float32Type ignored -> buf.setFloat(i, bb.getFloat());
+                case DType.Float64Type ignored -> buf.setDouble(i, bb.getDouble());
+                case DType.BoolType ignored -> buf.setBool(i, bb.get() != 0);
+                case DType.UInt8Type ignored -> buf.setByte(i, bb.get());
+                case DType.UInt16Type ignored -> buf.setShort(i, bb.getShort());
+                case DType.UInt32Type ignored -> buf.setInt(i, bb.getInt());
+                case DType.UInt64Type ignored -> buf.setLong(i, bb.getLong());
+                default -> buf.setDouble(i, bb.getDouble());
+            }
+        }
         return new NDArray(buf, dtype);
     }
 }

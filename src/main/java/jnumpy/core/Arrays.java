@@ -40,7 +40,7 @@ public final class Arrays {
     public static NDArray linspace(double start, double stop, int num) { return Creation.linspace(start, stop, num); }
     public static NDArray logspace(double start, double stop, int num) { return Creation.logspace(start, stop, num); }
     public static NDArray geomspace(double start, double stop, int num) { return Creation.geomspace(start, stop, num); }
-    public static NDArray meshgrid(NDArray x, NDArray y) { return Creation.meshgrid(x, y); }
+    public static NDArray[] meshgrid(NDArray x, NDArray y) { return Creation.meshgrid(x, y); }
     public static NDArray fromFunction(java.util.function.IntToDoubleFunction f, int... shape) { return Creation.fromFunction(f, shape); }
     public static NDArray copy(NDArray a) { return Creation.copy(a); }
 
@@ -60,7 +60,7 @@ public final class Arrays {
     public static NDArray stack(NDArray[] arrays, int axis) { return Manipulation.stack(arrays, axis); }
     public static NDArray hstack(NDArray[] arrays) { return Manipulation.hstack(arrays); }
     public static NDArray vstack(NDArray[] arrays) { return Manipulation.vstack(arrays); }
-    public static NDArray split(NDArray a, int sections, int axis) { return Manipulation.split(a, sections, axis); }
+    public static NDArray[] split(NDArray a, int sections, int axis) { return Manipulation.split(a, sections, axis); }
     public static NDArray columnStack(NDArray[] arrays) { return Manipulation.columnStack(arrays); }
 
     public static NDArray add(NDArray a, NDArray b) { return UFunc.add(a, b); }
@@ -141,13 +141,14 @@ public final class Arrays {
     public static double trace(NDArray a) { return Linalg.trace(a); }
     public static double norm(NDArray a) { return Linalg.norm(a); }
     public static NDArray inv(NDArray a) { return Linalg.inv(a); }
+    public static NDArray[] lu(NDArray a) { return Linalg.lu(a); }
     public static double det(NDArray a) { return Linalg.det(a); }
     public static int rank(NDArray a) { return Linalg.rank(a); }
-    public static NDArray qr(NDArray a) { return Linalg.qr(a); }
+    public static NDArray[] qr(NDArray a) { return Linalg.qr(a); }
     public static NDArray cholesky(NDArray a) { return Linalg.cholesky(a); }
-    public static NDArray svd(NDArray a) { return Linalg.svd(a); }
-    public static NDArray eigen(NDArray a) { return Linalg.eigen(a); }
+    public static NDArray[] svd(NDArray a) { return Linalg.svd(a); }
 
+    public static NDArray[] eigen(NDArray a) { return Linalg.eigen(a); }
     public static NDArray rand(int... shape) { return Random.random(shape); }
     public static NDArray randn(int... shape) { return Random.randn(shape); }
     public static NDArray randint(int low, int high, int... shape) { return Random.randint(low, high, shape); }

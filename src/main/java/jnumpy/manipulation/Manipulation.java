@@ -3,6 +3,7 @@ package jnumpy.manipulation;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.util.Util;
 
 public final class Manipulation {
 
@@ -39,7 +40,7 @@ public final class Manipulation {
                     indices[axis] = offset + i;
                     int[] srcIdx = indices.clone();
                     srcIdx[axis] = i;
-                    result.setDouble(arr.getDouble(srcIdx), indices);
+                    Util.writeElement(result, Util.readElement(arr, srcIdx), indices);
                 }
             }
             offset += dimSize;
@@ -66,7 +67,7 @@ public final class Manipulation {
                     remaining /= arrays[k].shape(d);
                 }
                 indices[pos] = k;
-                result.setDouble(arrays[k].getDouble(indicesAtDim(arrays[k], i)), indices);
+                Util.writeElement(result, Util.readElement(arrays[k], indicesAtDim(arrays[k], i)), indices);
             }
         }
         return result;
@@ -88,7 +89,7 @@ public final class Manipulation {
         return concatenate(reshaped, 1);
     }
 
-    public static NDArray split(NDArray a, int sections, int axis) {
+    public static NDArray[] split(NDArray a, int sections, int axis) {
         int dimSize = a.shape(axis);
         int sectionSize = dimSize / sections;
         int remainder = dimSize % sections;
@@ -96,18 +97,16 @@ public final class Manipulation {
         int start = 0;
         for (int i = 0; i < sections; i++) {
             int size = sectionSize + (i < remainder ? 1 : 0);
-            int[] newShape = a.shape().clone();
-            newShape[axis] = size;
             results[i] = jnumpy.indexing.Indexer.slice(a, axis, start, start + size, 1);
             start += size;
         }
-        return results[0];
+        return results;
     }
 
     public static NDArray diagFlat(NDArray a) {
         int n = Math.min(a.shape(0), a.shape(1));
         double[] diag = new double[n];
-        for (int i = 0; i < n; i++) diag[i] = a.getDouble(i, i);
+        for (int i = 0; i < n; i++) diag[i] = Util.readElement(a, i, i);
         return new NDArray(MemoryBuffer.wrap(diag), DType.FLOAT64);
     }
 

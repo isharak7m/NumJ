@@ -3,6 +3,7 @@ package jnumpy.statistics;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.util.Util;
 import java.util.Arrays;
 
 public final class Statistics {
@@ -84,11 +85,48 @@ public final class Statistics {
             long lo = (long) Math.floor(idx);
             long hi = (long) Math.ceil(idx);
             double frac = idx - lo;
-            double vlo = sorted.getDouble(new int[]{ (int) lo });
-            double vhi = sorted.getDouble(new int[]{ (int) hi });
+            double vlo = Util.readElement(sorted, (int) lo);
+            double vhi = Util.readElement(sorted, (int) hi);
             return NDArray.create(new double[]{ vlo + frac * (vhi - vlo) });
         }
-        return null;
+        int[] shape = a.shape();
+        java.util.HashSet<Integer> axisSet = new java.util.HashSet<>();
+        for (int ax : axis) axisSet.add(ax < 0 ? ax + shape.length : ax);
+        int[] resultShape = new int[shape.length - axisSet.size()];
+        int fi = 0;
+        for (int i = 0; i < shape.length; i++) {
+            if (!axisSet.contains(i)) resultShape[fi++] = shape[i];
+        }
+        if (resultShape.length == 0) resultShape = new int[]{ 1 };
+        NDArray result = NDArray.create(resultShape, DType.FLOAT64);
+        int[] outIdx = new int[resultShape.length];
+        for (long i = 0; i < result.size(); i++) {
+            long r = i;
+            for (int d = resultShape.length - 1; d >= 0; d--) {
+                outIdx[d] = (int) (r % resultShape[d]);
+                r /= resultShape[d];
+            }
+            int[] fullIdx = new int[shape.length];
+            fi = 0;
+            for (int d = 0; d < shape.length; d++) {
+                if (axisSet.contains(d)) fullIdx[d] = 0;
+                else fullIdx[d] = outIdx[fi++];
+            }
+            java.util.ArrayList<Double> values = new java.util.ArrayList<>();
+            int ax = axis[0];
+            for (int k = 0; k < shape[ax]; k++) {
+                fullIdx[ax] = k;
+                values.add(Util.readElement(sorted, fullIdx));
+            }
+            double idx = q * (values.size() - 1);
+            long lo = (long) Math.floor(idx);
+            long hi = (long) Math.ceil(idx);
+            double frac = idx - lo;
+            double vlo = values.get((int) lo);
+            double vhi = values.get((int) hi);
+            Util.writeElement(result, vlo + frac * (vhi - vlo), outIdx);
+        }
+        return result;
     }
 
     public static NDArray percentile(NDArray a, double p, int... axis) {
@@ -105,7 +143,7 @@ public final class Statistics {
                     indices[d] = (int) (remaining % a.shape()[d]);
                     remaining /= a.shape()[d];
                 }
-                result = op.applyAsDouble(result, a.getDouble(indices));
+                result = op.applyAsDouble(result, Util.readElement(a, indices));
             }
             return NDArray.create(new double[]{ result });
         }
@@ -113,17 +151,23 @@ public final class Statistics {
         java.util.HashSet<Integer> axisSet = new java.util.HashSet<>();
         for (int ax : axis) axisSet.add(ax < 0 ? ax + shape.length : ax);
         int[] finalShape = new int[shape.length - axisSet.size()];
-        int[] finalStrides = new int[shape.length - axisSet.size()];
         int fi = 0;
         for (int i = 0; i < shape.length; i++) {
             if (!axisSet.contains(i)) {
-                finalShape[fi] = shape[i];
-                finalStrides[fi] = fi == 0 ? 1 : finalStrides[fi - 1] * finalShape[fi - 1];
-                fi++;
+                finalShape[fi++] = shape[i];
             }
         }
-        if (finalShape.length == 0) { finalShape = new int[]{ 1 }; finalStrides = new int[]{ 1 }; }
+        if (finalShape.length == 0) { finalShape = new int[]{ 1 }; }
         NDArray result = NDArray.create(finalShape, a.dtype());
+        int[] id = new int[finalShape.length];
+        for (long i = 0; i < result.size(); i++) {
+            long r = i;
+            for (int d = finalShape.length - 1; d >= 0; d--) {
+                id[d] = (int) (r % finalShape[d]);
+                r /= finalShape[d];
+            }
+            Util.writeElement(result, identity, id);
+        }
         int[] srcIdx = new int[shape.length];
         int[] dstIdx = new int[finalShape.length];
         for (long flat = 0; flat < a.size(); flat++) {
@@ -136,15 +180,8 @@ public final class Statistics {
             for (int d = 0; d < shape.length; d++) {
                 if (!axisSet.contains(d)) dstIdx[fi++] = srcIdx[d];
             }
-            int dstFlat = 0;
-            for (int d = finalShape.length - 1; d >= 0; d--) {
-                dstFlat = dstFlat * finalShape[d] + dstIdx[d];
-            }
-            if (flat == 0) {
-                result.setDouble(identity, dstIdx);
-            }
-            double current = result.getDouble(dstIdx);
-            result.setDouble(op.applyAsDouble(current, a.getDouble(srcIdx)), dstIdx);
+            double current = Util.readElement(result, dstIdx);
+            Util.writeElement(result, op.applyAsDouble(current, Util.readElement(a, srcIdx)), dstIdx);
         }
         return result;
     }
@@ -160,7 +197,7 @@ public final class Statistics {
                     indices[d] = (int) (remaining % a.shape()[d]);
                     remaining /= a.shape()[d];
                 }
-                double val = a.getDouble(indices);
+                double val = Util.readElement(a, indices);
                 boolean better = findMax ? val > bestVal : val < bestVal;
                 if (better) { bestVal = val; bestIdx = i; }
             }
@@ -174,10 +211,9 @@ public final class Statistics {
             int n = (int) a.size();
             NDArray result = NDArray.create(new int[]{ n }, a.dtype());
             double acc = identity;
-            int[] indices = new int[1];
             for (int i = 0; i < n; i++) {
-                acc = op.applyAsDouble(acc, a.getDouble(i));
-                result.setDouble(acc, i);
+                acc = op.applyAsDouble(acc, Util.readBuffer(a.buffer(), a.dtype(), i));
+                Util.writeBuffer(result.buffer(), result.dtype(), i, acc);
             }
             return result;
         }
@@ -205,8 +241,8 @@ public final class Statistics {
                 }
                 for (int d = 0; d < dimSize; d++) {
                     indices[ax] = d;
-                    acc = op.applyAsDouble(acc, a.getDouble(indices));
-                    result.setDouble(acc, indices);
+                    acc = op.applyAsDouble(acc, Util.readElement(a, indices));
+                    Util.writeElement(result, acc, indices);
                 }
             }
         }
@@ -222,7 +258,7 @@ public final class Statistics {
                 indices[d] = (int) (remaining % a.shape()[d]);
                 remaining /= a.shape()[d];
             }
-            result.setDouble(op.applyAsDouble(a.getDouble(indices)), indices);
+            Util.writeElement(result, op.applyAsDouble(Util.readElement(a, indices)), indices);
         }
         return result;
     }
@@ -239,7 +275,7 @@ public final class Statistics {
                 indices[d] = (int) (remaining % shape[d]);
                 remaining /= shape[d];
             }
-            result.setDouble(op.applyAsDouble(ba.getDouble(indices), bb.getDouble(indices)), indices);
+            Util.writeElement(result, op.applyAsDouble(Util.readElement(ba, indices), Util.readElement(bb, indices)), indices);
         }
         return result;
     }

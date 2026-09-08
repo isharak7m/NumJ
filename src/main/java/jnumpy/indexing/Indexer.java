@@ -3,13 +3,89 @@ package jnumpy.indexing;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
-import java.util.Arrays;
+import jnumpy.broadcast.Broadcast;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Indexer {
 
     private Indexer() {}
+
+    private static double readElement(NDArray a, int[] idx) {
+        MemoryBuffer buf = a.buffer();
+        long offset = a.flatIndex(idx);
+        return switch (a.dtype()) {
+            case DType.BoolType ignored -> buf.getBool(offset) ? 1.0 : 0.0;
+            case DType.Int8Type ignored -> (double) buf.getByte(offset);
+            case DType.Int16Type ignored -> (double) buf.getShort(offset);
+            case DType.Int32Type ignored -> (double) buf.getInt(offset);
+            case DType.Int64Type ignored -> (double) buf.getLong(offset);
+            case DType.UInt8Type ignored -> (double) (buf.getByte(offset) & 0xFF);
+            case DType.UInt16Type ignored -> (double) (buf.getShort(offset) & 0xFFFF);
+            case DType.UInt32Type ignored -> (double) (buf.getInt(offset) & 0xFFFFFFFFL);
+            case DType.UInt64Type ignored -> (double) buf.getLong(offset);
+            case DType.Float16Type ignored -> (double) buf.getShort(offset);
+            case DType.Float32Type ignored -> (double) buf.getFloat(offset);
+            case DType.Float64Type ignored -> buf.getDouble(offset);
+            default -> buf.getDouble(offset);
+        };
+    }
+
+    private static void writeElement(NDArray a, double val, int[] idx) {
+        MemoryBuffer buf = a.buffer();
+        long offset = a.flatIndex(idx);
+        switch (a.dtype()) {
+            case DType.BoolType ignored -> buf.setBool(offset, val != 0.0);
+            case DType.Int8Type ignored -> buf.setByte(offset, (byte) ((int) val));
+            case DType.Int16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.Int32Type ignored -> buf.setInt(offset, (int) val);
+            case DType.Int64Type ignored -> buf.setLong(offset, (long) val);
+            case DType.UInt8Type ignored -> buf.setByte(offset, (byte) ((int) val));
+            case DType.UInt16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.UInt32Type ignored -> buf.setInt(offset, (int) val);
+            case DType.UInt64Type ignored -> buf.setLong(offset, (long) val);
+            case DType.Float16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.Float32Type ignored -> buf.setFloat(offset, (float) val);
+            case DType.Float64Type ignored -> buf.setDouble(offset, val);
+            default -> buf.setDouble(offset, val);
+        }
+    }
+
+    private static double readBuffer(MemoryBuffer buf, DType dtype, long offset) {
+        return switch (dtype) {
+            case DType.BoolType ignored -> buf.getBool(offset) ? 1.0 : 0.0;
+            case DType.Int8Type ignored -> (double) buf.getByte(offset);
+            case DType.Int16Type ignored -> (double) buf.getShort(offset);
+            case DType.Int32Type ignored -> (double) buf.getInt(offset);
+            case DType.Int64Type ignored -> (double) buf.getLong(offset);
+            case DType.UInt8Type ignored -> (double) (buf.getByte(offset) & 0xFF);
+            case DType.UInt16Type ignored -> (double) (buf.getShort(offset) & 0xFFFF);
+            case DType.UInt32Type ignored -> (double) (buf.getInt(offset) & 0xFFFFFFFFL);
+            case DType.UInt64Type ignored -> (double) buf.getLong(offset);
+            case DType.Float16Type ignored -> (double) buf.getShort(offset);
+            case DType.Float32Type ignored -> (double) buf.getFloat(offset);
+            case DType.Float64Type ignored -> buf.getDouble(offset);
+            default -> buf.getDouble(offset);
+        };
+    }
+
+    private static void writeBuffer(MemoryBuffer buf, DType dtype, long offset, double val) {
+        switch (dtype) {
+            case DType.BoolType ignored -> buf.setBool(offset, val != 0.0);
+            case DType.Int8Type ignored -> buf.setByte(offset, (byte) ((int) val));
+            case DType.Int16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.Int32Type ignored -> buf.setInt(offset, (int) val);
+            case DType.Int64Type ignored -> buf.setLong(offset, (long) val);
+            case DType.UInt8Type ignored -> buf.setByte(offset, (byte) ((int) val));
+            case DType.UInt16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.UInt32Type ignored -> buf.setInt(offset, (int) val);
+            case DType.UInt64Type ignored -> buf.setLong(offset, (long) val);
+            case DType.Float16Type ignored -> buf.setShort(offset, (short) ((int) val));
+            case DType.Float32Type ignored -> buf.setFloat(offset, (float) val);
+            case DType.Float64Type ignored -> buf.setDouble(offset, val);
+            default -> buf.setDouble(offset, val);
+        }
+    }
 
     public static NDArray get(NDArray array, int... indices) {
         if (indices.length > array.ndim()) {
@@ -50,12 +126,13 @@ public final class Indexer {
         int[] vShape = value.shape();
         int[] targetShape = view.shape();
         int[] bShape = Broadcast.broadcastShape(vShape, targetShape);
-        NDArray broadcastValue = jnumpy.broadcast.Broadcast.broadcastTo(value, bShape);
-        NDArray broadcastTarget = jnumpy.broadcast.Broadcast.broadcastTo(view, bShape);
-        jnumpy.broadcast.Broadcast.BroadcastIterator it =
-                new jnumpy.broadcast.Broadcast.BroadcastIterator(broadcastValue, broadcastTarget, bShape);
+        NDArray broadcastValue = Broadcast.broadcastTo(value, bShape);
+        NDArray broadcastTarget = Broadcast.broadcastTo(view, bShape);
+        Broadcast.BroadcastIterator it =
+                new Broadcast.BroadcastIterator(broadcastValue, broadcastTarget, bShape);
         it.forEach((flat, aOff, bOff) -> {
-            array.buffer().setDouble(bOff, value.buffer().getDouble(aOff));
+            double val = readBuffer(value.buffer(), value.dtype(), aOff);
+            writeBuffer(array.buffer(), array.dtype(), bOff, val);
         });
         return array;
     }
@@ -99,8 +176,8 @@ public final class Indexer {
                 for (int k = 0; k < array.shape(i); k++) {
                     srcIdx[i] = k;
                     dstIdx[i] = k;
-                    double val = array.getDouble(srcIdx);
-                    result.setDouble(val, dstIdx);
+                    double val = readElement(array, srcIdx);
+                    writeElement(result, val, dstIdx);
                 }
             }
         }
@@ -129,14 +206,15 @@ public final class Indexer {
                 array.indices(i, srcIdx);
                 dstIdx[0] = dst++;
                 for (int d = 1; d < array.ndim(); d++) dstIdx[d] = srcIdx[d];
-                result.setDouble(array.getDouble(srcIdx), dstIdx);
+                double val = readElement(array, srcIdx);
+                writeElement(result, val, dstIdx);
             }
         }
         return result;
     }
 
-    public static class Broadcast {
-        private Broadcast() {}
+    public static class ShapeHelper {
+        private ShapeHelper() {}
         public static int[] broadcastShape(int[]... shapes) {
             int maxDim = 0;
             for (int[] s : shapes) maxDim = Math.max(maxDim, s.length);

@@ -4,9 +4,9 @@ import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
 import jnumpy.broadcast.Broadcast;
+import jnumpy.util.Util;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.DoublePredicate;
 
 public final class UFunc {
 
@@ -34,7 +34,7 @@ public final class UFunc {
     public static NDArray exp(NDArray a) { return unaryOp(a, "exp", Math::exp); }
     public static NDArray log(NDArray a) { return unaryOp(a, "log", Math::log); }
     public static NDArray log10(NDArray a) { return unaryOp(a, "log10", Math::log10); }
-    public static NDArray log2(NDArray a) { return unaryOp(a, "log2", Math::log10); } // log2 via log10
+    public static NDArray log2(NDArray a) { return unaryOp(a, "log2", x -> Math.log(x) / Math.log(2)); }
     public static NDArray ceil(NDArray a) { return unaryOp(a, "ceil", Math::ceil); }
     public static NDArray floor(NDArray a) { return unaryOp(a, "floor", Math::floor); }
     public static NDArray round(NDArray a) { return unaryOp(a, "round", Math::rint); }
@@ -76,26 +76,23 @@ public final class UFunc {
         for (long i = 0; i < a.size(); i++) {
             long remaining = i;
             for (int d = a.ndim() - 1; d >= 0; d--) {
-                int[] shape = a.shape();
-                indices[d] = (int) (remaining % shape[d]);
-                remaining /= shape[d];
+                indices[d] = (int) (remaining % a.shape()[d]);
+                remaining /= a.shape()[d];
             }
-            double val = a.getDouble(indices);
-            result.setDouble(op.applyAsDouble(val), indices);
+            double val = Util.readElement(a, indices);
+            Util.writeElement(result, op.applyAsDouble(val), indices);
         }
         return result;
     }
 
     private static NDArray binaryOp(NDArray a, NDArray b, String name, DoubleBinaryOperator op) {
         int[] shape = Broadcast.broadcastShape(a.shape(), b.shape());
-        NDArray broadcastA = Broadcast.broadcastTo(a, shape);
-        NDArray broadcastB = Broadcast.broadcastTo(b, shape);
         DType resultDtype = a.dtype().promotedWith(b.dtype());
         NDArray result = NDArray.create(shape, resultDtype);
         Broadcast.BroadcastIterator it = Broadcast.iterator(a, b);
         it.forEach((flat, aOff, bOff) -> {
-            double va = a.buffer().getDouble(aOff);
-            double vb = b.buffer().getDouble(bOff);
+            double va = Util.readBuffer(a.buffer(), a.dtype(), aOff);
+            double vb = Util.readBuffer(b.buffer(), b.dtype(), bOff);
             long resultOff = result.offset();
             long remaining = flat;
             for (int d = result.ndim() - 1; d >= 0; d--) {
@@ -103,7 +100,7 @@ public final class UFunc {
                 remaining /= shape[d];
                 resultOff += (long) coord * result.strides()[d];
             }
-            result.buffer().setDouble(resultOff, op.applyAsDouble(va, vb));
+            Util.writeBuffer(result.buffer(), result.dtype(), resultOff, op.applyAsDouble(va, vb));
         });
         return result;
     }

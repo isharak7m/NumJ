@@ -3,6 +3,7 @@ package jnumpy.io;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.util.Util;
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public final class IO {
                     indices[d] = (int) (remaining % a.shape()[d]);
                     remaining /= a.shape()[d];
                 }
-                dos.writeDouble(a.getDouble(indices));
+                dos.writeDouble(Util.readElement(a, indices));
             }
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to write file: " + filename, e);
@@ -47,14 +48,14 @@ public final class IO {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filename))) {
             if (a.ndim() == 1) {
                 for (int i = 0; i < a.shape(0); i++) {
-                    writer.write(Double.toString(a.getDouble(i)));
+                    writer.write(Double.toString(Util.readElement(a, i)));
                     writer.newLine();
                 }
             } else if (a.ndim() == 2) {
                 for (int i = 0; i < a.shape(0); i++) {
                     for (int j = 0; j < a.shape(1); j++) {
                         if (j > 0) writer.write(",");
-                        writer.write(Double.toString(a.getDouble(i, j)));
+                        writer.write(Double.toString(Util.readElement(a, i, j)));
                     }
                     writer.newLine();
                 }

@@ -45,7 +45,7 @@ tasks.withType<JavaExec> {
 tasks.withType<Test> {
     useJUnitPlatform()
     maxHeapSize = "4g"
-    jvmArgs("--enable-preview", "--add-modules=jdk.incubator.vector")
+    jvmArgs("--enable-preview")
 }
 
 tasks.withType<Javadoc> {
@@ -54,7 +54,6 @@ tasks.withType<Javadoc> {
     (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
     (options as StandardJavadocDocletOptions).addBooleanOption("-enable-preview", true)
     (options as StandardJavadocDocletOptions).addStringOption("-source", "21")
-    (options as StandardJavadocDocletOptions).addStringOption("-add-modules", "jdk.incubator.vector")
     isFailOnError = false
 }
 
@@ -120,5 +119,5 @@ jmh {
     benchmarkMode.set(listOf("thrpt", "avgt"))
     timeUnit.set("ms")
     resultFormat.set("JSON")
-    jvmArgs.set(listOf("--add-modules=jdk.incubator.vector"))
+    jvmArgs.set(listOf())
 }

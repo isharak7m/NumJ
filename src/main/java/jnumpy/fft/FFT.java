@@ -3,6 +3,7 @@ package jnumpy.fft;
 import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.util.Util;
 
 public final class FFT {
 
@@ -15,48 +16,46 @@ public final class FFT {
         int[] idx = new int[1];
         for (int i = 0; i < n; i++) {
             idx[0] = i;
-            re[i] = a.getDouble(idx);
+            re[i] = Util.readElement(a, idx);
         }
         fftCooleyTukey(re, im, false);
-        double[] result = new double[n * 2];
+        NDArray result = NDArray.create(new int[]{ n, 2 }, DType.FLOAT64);
         for (int i = 0; i < n; i++) {
-            result[2 * i] = re[i];
-            result[2 * i + 1] = im[i];
+            result.setDouble(re[i], i, 0);
+            result.setDouble(im[i], i, 1);
         }
-        MemoryBuffer buf = MemoryBuffer.allocate(DType.COMPLEX64, n);
-        for (int i = 0; i < n; i++) {
-            buf.setFloat(2L * i, (float) re[i]);
-            buf.setFloat(2L * i + 1, (float) im[i]);
-        }
-        return new NDArray(buf, new int[]{ n }, DType.COMPLEX64, 'C');
+        return result;
     }
 
     public static NDArray ifft(NDArray a) {
-        int n = (int) a.size();
+        int n = a.ndim() == 1 ? (int) a.size() : a.shape(0);
         double[] re = new double[n];
         double[] im = new double[n];
         for (int i = 0; i < n; i++) {
-            re[i] = a.getFloat(new int[]{ i, 0 });
-            im[i] = a.getFloat(new int[]{ i, 1 });
+            if (a.ndim() == 2) {
+                re[i] = Util.readElement(a, i, 0);
+                im[i] = Util.readElement(a, i, 1);
+            } else {
+                re[i] = Util.readElement(a, i);
+            }
         }
         fftCooleyTukey(re, im, true);
         double invN = 1.0 / n;
-        for (int i = 0; i < n; i++) { re[i] *= invN; im[i] *= invN; }
-        MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, n);
-        for (int i = 0; i < n; i++) buf.setDouble(i, re[i]);
-        return new NDArray(buf, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[]{ n }, DType.FLOAT64);
+        for (int i = 0; i < n; i++) result.setDouble(re[i] * invN, i);
+        return result;
     }
 
     public static NDArray fft2(NDArray a) {
         int rows = a.shape(0);
         int cols = a.shape(1);
-        NDArray result = NDArray.create(new int[]{ rows, cols }, DType.COMPLEX64);
+        NDArray result = NDArray.create(new int[]{ rows, cols, 2 }, DType.FLOAT64);
         for (int i = 0; i < rows; i++) {
             NDArray row = jnumpy.indexing.Indexer.get(a, i);
             NDArray fftRow = fft(row);
             for (int j = 0; j < cols; j++) {
-                result.setFloat(fftRow.getFloat(new int[]{ j, 0 }), i, j, 0);
-                result.setFloat(fftRow.getFloat(new int[]{ j, 1 }), i, j, 1);
+                result.setDouble(fftRow.getDouble(j, 0), i, j, 0);
+                result.setDouble(fftRow.getDouble(j, 1), i, j, 1);
             }
         }
         return result;
@@ -67,9 +66,16 @@ public final class FFT {
         int cols = a.shape(1);
         NDArray result = NDArray.create(new int[]{ rows, cols }, DType.FLOAT64);
         for (int i = 0; i < rows; i++) {
-            NDArray row = jnumpy.indexing.Indexer.get(a, i);
-            NDArray ifftRow = ifft(row);
-            for (int j = 0; j < cols; j++) result.setDouble(ifftRow.getDouble(new int[]{ j }), i, j);
+            NDArray slice = jnumpy.indexing.Indexer.get(a, i);
+            double[] re = new double[cols];
+            double[] im = new double[cols];
+            for (int j = 0; j < cols; j++) {
+                re[j] = slice.getDouble(j, 0);
+                im[j] = slice.getDouble(j, 1);
+            }
+            fftCooleyTukey(re, im, true);
+            double invN = 1.0 / cols;
+            for (int j = 0; j < cols; j++) result.setDouble(re[j] * invN, i, j);
         }
         return result;
     }
@@ -78,22 +84,22 @@ public final class FFT {
         NDArray full = fft(a);
         int n = (int) a.size();
         int m = n / 2 + 1;
-        MemoryBuffer buf = MemoryBuffer.allocate(DType.COMPLEX64, m);
+        NDArray result = NDArray.create(new int[]{ m, 2 }, DType.FLOAT64);
         for (int i = 0; i < m; i++) {
-            buf.setFloat(2L * i, full.getFloat(i, 0));
-            buf.setFloat(2L * i + 1, full.getFloat(i, 1));
+            result.setDouble(full.getDouble(i, 0), i, 0);
+            result.setDouble(full.getDouble(i, 1), i, 1);
         }
-        return new NDArray(buf, new int[]{ m }, DType.COMPLEX64, 'C');
+        return result;
     }
 
     public static NDArray irfft(NDArray a) {
-        int m = (int) a.size();
+        int m = a.shape(0);
         int n = 2 * (m - 1);
         double[] re = new double[n];
         double[] im = new double[n];
         for (int i = 0; i < m; i++) {
-            re[i] = a.getFloat(i, 0);
-            im[i] = a.getFloat(i, 1);
+            re[i] = a.getDouble(i, 0);
+            im[i] = a.getDouble(i, 1);
         }
         for (int i = m; i < n; i++) {
             re[i] = re[n - i];
@@ -101,9 +107,9 @@ public final class FFT {
         }
         fftCooleyTukey(re, im, true);
         double invN = 1.0 / n;
-        MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, n);
-        for (int i = 0; i < n; i++) buf.setDouble(i, re[i] * invN);
-        return new NDArray(buf, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[]{ n }, DType.FLOAT64);
+        for (int i = 0; i < n; i++) result.setDouble(re[i] * invN, i);
+        return result;
     }
 
     private static void fftCooleyTukey(double[] re, double[] im, boolean inverse) {

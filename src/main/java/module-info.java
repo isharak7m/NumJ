@@ -1,5 +1,4 @@
 module jnumpy {
-    requires jdk.incubator.vector;
     exports jnumpy.core;
     exports jnumpy.ndarray;
     exports jnumpy.dtype;
@@ -18,7 +17,5 @@ module jnumpy {
     exports jnumpy.search;
     exports jnumpy.io;
     exports jnumpy.string;
-    exports jnumpy.parallel;
-    exports jnumpy.simd;
     exports jnumpy.util;
 }
