@@ -10,10 +10,8 @@ import jnumpy.linalg.Linalg;
 import jnumpy.random.Random;
 import jnumpy.sort.Sort;
 import jnumpy.search.Search;
-import jnumpy.fft.FFT;
 import jnumpy.polynomial.Polynomial;
 import jnumpy.io.IO;
-import jnumpy.string.StringOps;
 import jnumpy.util.Util;
 
 public final class Arrays {
@@ -106,13 +104,6 @@ public final class Arrays {
     public static NDArray equal(NDArray a, NDArray b) { return UFunc.equal(a, b); }
     public static NDArray notEqual(NDArray a, NDArray b) { return UFunc.notEqual(a, b); }
 
-    public static NDArray bitwiseAnd(NDArray a, NDArray b) { return UFunc.bitwiseAnd(a, b); }
-    public static NDArray bitwiseOr(NDArray a, NDArray b) { return UFunc.bitwiseOr(a, b); }
-    public static NDArray bitwiseXor(NDArray a, NDArray b) { return UFunc.bitwiseXor(a, b); }
-    public static NDArray bitwiseNot(NDArray a) { return UFunc.bitwiseNot(a); }
-    public static NDArray leftShift(NDArray a, NDArray b) { return UFunc.leftShift(a, b); }
-    public static NDArray rightShift(NDArray a, NDArray b) { return UFunc.rightShift(a, b); }
-
     public static NDArray isnan(NDArray a) { return UFunc.isNan(a); }
     public static NDArray isinf(NDArray a) { return UFunc.isInf(a); }
     public static NDArray isfinite(NDArray a) { return UFunc.isFinite(a); }
@@ -137,18 +128,10 @@ public final class Arrays {
     public static NDArray inner(NDArray a, NDArray b) { return Linalg.inner(a, b); }
     public static NDArray outer(NDArray a, NDArray b) { return Linalg.outer(a, b); }
     public static NDArray cross(NDArray a, NDArray b) { return Linalg.cross(a, b); }
-    public static NDArray kron(NDArray a, NDArray b) { return Linalg.kron(a, b); }
-    public static double trace(NDArray a) { return Linalg.trace(a); }
     public static double norm(NDArray a) { return Linalg.norm(a); }
     public static NDArray inv(NDArray a) { return Linalg.inv(a); }
-    public static NDArray[] lu(NDArray a) { return Linalg.lu(a); }
     public static double det(NDArray a) { return Linalg.det(a); }
-    public static int rank(NDArray a) { return Linalg.rank(a); }
-    public static NDArray[] qr(NDArray a) { return Linalg.qr(a); }
-    public static NDArray cholesky(NDArray a) { return Linalg.cholesky(a); }
-    public static NDArray[] svd(NDArray a) { return Linalg.svd(a); }
 
-    public static NDArray[] eigen(NDArray a) { return Linalg.eigen(a); }
     public static NDArray rand(int... shape) { return Random.random(shape); }
     public static NDArray randn(int... shape) { return Random.randn(shape); }
     public static NDArray randint(int low, int high, int... shape) { return Random.randint(low, high, shape); }
@@ -180,16 +163,8 @@ public final class Arrays {
     public static NDArray extract(NDArray condition, NDArray a) { return Search.extract(condition, a); }
     public static NDArray compress(NDArray condition, NDArray a, int axis) { return Search.compress(condition, a, axis); }
 
-    public static NDArray fft(NDArray a) { return FFT.fft(a); }
-    public static NDArray ifft(NDArray a) { return FFT.ifft(a); }
-    public static NDArray fft2(NDArray a) { return FFT.fft2(a); }
-    public static NDArray ifft2(NDArray a) { return FFT.ifft2(a); }
-    public static NDArray rfft(NDArray a) { return FFT.rfft(a); }
-    public static NDArray irfft(NDArray a) { return FFT.irfft(a); }
-
     public static NDArray polyfit(NDArray x, NDArray y, int deg) { return Polynomial.polyfit(x, y, deg); }
     public static NDArray polyval(NDArray p, NDArray x) { return Polynomial.polyval(p, x); }
-    public static NDArray roots(NDArray p) { return Polynomial.roots(p); }
     public static NDArray polyadd(NDArray a, NDArray b) { return Polynomial.polyadd(a, b); }
     public static NDArray polymul(NDArray a, NDArray b) { return Polynomial.polymul(a, b); }
     public static NDArray polydiv(NDArray a, NDArray b) { return Polynomial.polydiv(a, b); }
@@ -198,11 +173,6 @@ public final class Arrays {
     public static void tofile(NDArray a, String filename) { IO.tofile(a, filename); }
     public static NDArray fromcsv(String filename) { return IO.fromcsv(filename); }
     public static void tocsv(NDArray a, String filename) { IO.tocsv(a, filename); }
-
-    public static NDArray charUpper(NDArray a) { return StringOps.upper(a); }
-    public static NDArray charLower(NDArray a) { return StringOps.lower(a); }
-    public static NDArray charStrip(NDArray a) { return StringOps.strip(a); }
-    public static NDArray charReplace(NDArray a, String old, String newStr) { return StringOps.replace(a, old, newStr); }
 
     public static double[] toDoubleArray(NDArray a) { return Util.toDoubleArray(a); }
     public static String toString(NDArray a) { return a.toString(); }

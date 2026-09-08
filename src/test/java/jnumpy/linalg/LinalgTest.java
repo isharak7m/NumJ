@@ -59,12 +59,6 @@ class LinalgTest {
     }
 
     @Test
-    void testTrace() {
-        NDArray a = Arrays.array(new double[][]{{1.0, 2.0}, {3.0, 4.0}});
-        assertEquals(5.0, Linalg.trace(a), 1e-12);
-    }
-
-    @Test
     void testCross() {
         NDArray a = Arrays.array(new double[]{1.0, 0.0, 0.0});
         NDArray b = Arrays.array(new double[]{0.0, 1.0, 0.0});
@@ -74,21 +68,4 @@ class LinalgTest {
         assertEquals(1.0, c.getDouble(2), 1e-12);
     }
 
-    @Test
-    void testKron() {
-        NDArray a = Arrays.array(new double[][]{{1.0, 2.0}, {3.0, 4.0}});
-        NDArray b = Arrays.array(new double[][]{{0.0, 5.0}, {6.0, 7.0}});
-        NDArray k = Linalg.kron(a, b);
-        assertEquals(4, k.shape(0));
-        assertEquals(4, k.shape(1));
-    }
-
-    @Test
-    void testCholesky() {
-        NDArray a = Arrays.array(new double[][]{{4.0, 2.0}, {2.0, 5.0}});
-        NDArray L = Linalg.cholesky(a);
-        NDArray Lt = L.T();
-        NDArray LLt = Linalg.matmul(L, Lt);
-        assertEquals(4.0, LLt.getDouble(0, 0), 1e-12);
-    }
 }

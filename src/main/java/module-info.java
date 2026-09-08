@@ -11,11 +11,9 @@ module jnumpy {
     exports jnumpy.linalg;
     exports jnumpy.random;
     exports jnumpy.statistics;
-    exports jnumpy.fft;
     exports jnumpy.polynomial;
     exports jnumpy.sort;
     exports jnumpy.search;
     exports jnumpy.io;
-    exports jnumpy.string;
     exports jnumpy.util;
 }
