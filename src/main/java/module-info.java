@@ -16,4 +16,5 @@ module jnumpy {
     exports jnumpy.search;
     exports jnumpy.io;
     exports jnumpy.util;
+    exports jnumpy.autodiff;
 }
