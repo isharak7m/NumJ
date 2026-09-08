@@ -1,12 +1,28 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.ndarray;
 
-import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
-import jnumpy.broadcast.Broadcast;
-import jnumpy.indexing.Indexer;
-import jnumpy.ufunc.UFunc;
 import java.util.Arrays;
 import java.util.Objects;
+import jnumpy.broadcast.Broadcast;
+import jnumpy.dtype.DType;
+import jnumpy.indexing.Indexer;
+import jnumpy.memory.MemoryBuffer;
+import jnumpy.ufunc.UFunc;
 
 public final class NDArray {
 
@@ -33,22 +49,50 @@ public final class NDArray {
     }
 
     public NDArray(MemoryBuffer buffer, DType dtype) {
-        this(new int[]{ (int) buffer.size() }, computeStrides(new int[]{ (int) buffer.size() }, 'C'),
-                dtype, 0, buffer, false);
+        this(
+                new int[] {(int) buffer.size()},
+                computeStrides(new int[] {(int) buffer.size()}, 'C'),
+                dtype,
+                0,
+                buffer,
+                false);
     }
 
     public NDArray(MemoryBuffer buffer, int[] shape, DType dtype, char order) {
         this(shape, computeStrides(shape, order), dtype, 0, buffer, false);
     }
 
-    public int[] shape() { return shape.clone(); }
-    public long[] strides() { return strides.clone(); }
-    public DType dtype() { return dtype; }
-    public long offset() { return offset; }
-    public MemoryBuffer buffer() { return buffer; }
-    public boolean isView() { return isView; }
-    public int ndim() { return ndim; }
-    public long size() { return size; }
+    public int[] shape() {
+        return shape.clone();
+    }
+
+    public long[] strides() {
+        return strides.clone();
+    }
+
+    public DType dtype() {
+        return dtype;
+    }
+
+    public long offset() {
+        return offset;
+    }
+
+    public MemoryBuffer buffer() {
+        return buffer;
+    }
+
+    public boolean isView() {
+        return isView;
+    }
+
+    public int ndim() {
+        return ndim;
+    }
+
+    public long size() {
+        return size;
+    }
 
     public int shape(int axis) {
         if (axis < 0) axis += ndim;
@@ -60,10 +104,21 @@ public final class NDArray {
         return strides[axis];
     }
 
-    public boolean isScalar() { return ndim == 0; }
-    public boolean isVector() { return ndim == 1; }
-    public boolean isMatrix() { return ndim == 2; }
-    public boolean isEmpty() { return size == 0; }
+    public boolean isScalar() {
+        return ndim == 0;
+    }
+
+    public boolean isVector() {
+        return ndim == 1;
+    }
+
+    public boolean isMatrix() {
+        return ndim == 2;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
     public boolean isContiguous() {
         return isContiguous('C') || isContiguous('F');
@@ -104,27 +159,85 @@ public final class NDArray {
         return idx;
     }
 
-    public byte getByte(int... indices) { return buffer.getByte(flatIndex(indices)); }
-    public short getShort(int... indices) { return buffer.getShort(flatIndex(indices)); }
-    public int getInt(int... indices) { return buffer.getInt(flatIndex(indices)); }
-    public long getLong(int... indices) { return buffer.getLong(flatIndex(indices)); }
-    public float getFloat(int... indices) { return buffer.getFloat(flatIndex(indices)); }
-    public double getDouble(int... indices) { return buffer.getDouble(flatIndex(indices)); }
-    public boolean getBoolean(int... indices) { return buffer.getBool(flatIndex(indices)); }
-    public char getChar(int... indices) { return buffer.getChar(flatIndex(indices)); }
-    public String getString(int... indices) { return buffer.getString(flatIndex(indices)); }
-    public Object getObject(int... indices) { return buffer.getObject(flatIndex(indices)); }
+    public byte getByte(int... indices) {
+        return buffer.getByte(flatIndex(indices));
+    }
 
-    public void setByte(byte value, int... indices) { buffer.setByte(flatIndex(indices), value); }
-    public void setShort(short value, int... indices) { buffer.setShort(flatIndex(indices), value); }
-    public void setInt(int value, int... indices) { buffer.setInt(flatIndex(indices), value); }
-    public void setLong(long value, int... indices) { buffer.setLong(flatIndex(indices), value); }
-    public void setFloat(float value, int... indices) { buffer.setFloat(flatIndex(indices), value); }
-    public void setDouble(double value, int... indices) { buffer.setDouble(flatIndex(indices), value); }
-    public void setBoolean(boolean value, int... indices) { buffer.setBool(flatIndex(indices), value); }
-    public void setChar(char value, int... indices) { buffer.setChar(flatIndex(indices), value); }
-    public void setString(String value, int... indices) { buffer.setString(flatIndex(indices), value); }
-    public void setObject(Object value, int... indices) { buffer.setObject(flatIndex(indices), value); }
+    public short getShort(int... indices) {
+        return buffer.getShort(flatIndex(indices));
+    }
+
+    public int getInt(int... indices) {
+        return buffer.getInt(flatIndex(indices));
+    }
+
+    public long getLong(int... indices) {
+        return buffer.getLong(flatIndex(indices));
+    }
+
+    public float getFloat(int... indices) {
+        return buffer.getFloat(flatIndex(indices));
+    }
+
+    public double getDouble(int... indices) {
+        return buffer.getDouble(flatIndex(indices));
+    }
+
+    public boolean getBoolean(int... indices) {
+        return buffer.getBool(flatIndex(indices));
+    }
+
+    public char getChar(int... indices) {
+        return buffer.getChar(flatIndex(indices));
+    }
+
+    public String getString(int... indices) {
+        return buffer.getString(flatIndex(indices));
+    }
+
+    public Object getObject(int... indices) {
+        return buffer.getObject(flatIndex(indices));
+    }
+
+    public void setByte(byte value, int... indices) {
+        buffer.setByte(flatIndex(indices), value);
+    }
+
+    public void setShort(short value, int... indices) {
+        buffer.setShort(flatIndex(indices), value);
+    }
+
+    public void setInt(int value, int... indices) {
+        buffer.setInt(flatIndex(indices), value);
+    }
+
+    public void setLong(long value, int... indices) {
+        buffer.setLong(flatIndex(indices), value);
+    }
+
+    public void setFloat(float value, int... indices) {
+        buffer.setFloat(flatIndex(indices), value);
+    }
+
+    public void setDouble(double value, int... indices) {
+        buffer.setDouble(flatIndex(indices), value);
+    }
+
+    public void setBoolean(boolean value, int... indices) {
+        buffer.setBool(flatIndex(indices), value);
+    }
+
+    public void setChar(char value, int... indices) {
+        buffer.setChar(flatIndex(indices), value);
+    }
+
+    public void setString(String value, int... indices) {
+        buffer.setString(flatIndex(indices), value);
+    }
+
+    public void setObject(Object value, int... indices) {
+        buffer.setObject(flatIndex(indices), value);
+    }
 
     public NDArray copy() {
         MemoryBuffer newBuf = MemoryBuffer.allocate(dtype, size);
@@ -138,7 +251,7 @@ public final class NDArray {
 
     public NDArray view() {
         return new NDArray(shape, strides, dtype, offset, buffer, true);
-    } 
+    }
 
     public NDArray reshape(int... newShape) {
         long newSize = 1;
@@ -157,7 +270,8 @@ public final class NDArray {
             newSize = size;
         }
         if (newSize != size) {
-            throw new IllegalArgumentException("Cannot reshape array of size " + size + " into shape " + Arrays.toString(newShape));
+            throw new IllegalArgumentException(
+                    "Cannot reshape array of size " + size + " into shape " + Arrays.toString(newShape));
         }
         if (isContiguous()) {
             return new NDArray(newShape, computeStrides(newShape, 'C'), dtype, offset, buffer, true);
@@ -168,10 +282,10 @@ public final class NDArray {
 
     public NDArray ravel() {
         if (isContiguous()) {
-            return new NDArray(new int[]{ (int) size }, new long[]{ 1 }, dtype, offset, buffer, true);
+            return new NDArray(new int[] {(int) size}, new long[] {1}, dtype, offset, buffer, true);
         }
         NDArray flat = copy();
-        return new NDArray(flat.buffer, new int[]{ (int) size }, dtype, 'C');
+        return new NDArray(flat.buffer, new int[] {(int) size}, dtype, 'C');
     }
 
     public NDArray flatten() {
@@ -250,7 +364,12 @@ public final class NDArray {
         int j = 0;
         for (int i = 0; i < ndim; i++) {
             boolean skip = false;
-            for (int axis : axes) { if (i == axis) { skip = true; break; } }
+            for (int axis : axes) {
+                if (i == axis) {
+                    skip = true;
+                    break;
+                }
+            }
             if (!skip) {
                 result[j] = shape[i];
                 resultStrides[j] = strides[i];
@@ -358,37 +477,121 @@ public final class NDArray {
         return Broadcast.broadcastTo(this, targetShape);
     }
 
-    public NDArray add(NDArray other) { return UFunc.add(this, other); }
-    public NDArray sub(NDArray other) { return UFunc.sub(this, other); }
-    public NDArray mul(NDArray other) { return UFunc.mul(this, other); }
-    public NDArray div(NDArray other) { return UFunc.div(this, other); }
-    public NDArray pow(NDArray other) { return UFunc.pow(this, other); }
-    public NDArray neg() { return UFunc.neg(this); }
-    public NDArray abs() { return UFunc.abs(this); }
-    public NDArray sqrt() { return UFunc.sqrt(this); }
-    public NDArray sin() { return UFunc.sin(this); }
-    public NDArray cos() { return UFunc.cos(this); }
-    public NDArray tan() { return UFunc.tan(this); }
-    public NDArray exp() { return UFunc.exp(this); }
-    public NDArray log() { return UFunc.log(this); }
+    public NDArray add(NDArray other) {
+        return UFunc.add(this, other);
+    }
 
-    public NDArray sum(int... axis) { return jnumpy.statistics.Statistics.sum(this, axis); }
-    public NDArray mean(int... axis) { return jnumpy.statistics.Statistics.mean(this, axis); }
-    public NDArray var(int... axis) { return jnumpy.statistics.Statistics.var(this, axis); }
-    public NDArray std(int... axis) { return jnumpy.statistics.Statistics.std(this, axis); }
-    public NDArray prod(int... axis) { return jnumpy.statistics.Statistics.prod(this, axis); }
-    public NDArray cumsum(int... axis) { return jnumpy.statistics.Statistics.cumsum(this, axis); }
-    public NDArray cumprod(int... axis) { return jnumpy.statistics.Statistics.cumprod(this, axis); }
-    public NDArray min(int... axis) { return jnumpy.statistics.Statistics.min(this, axis); }
-    public NDArray max(int... axis) { return jnumpy.statistics.Statistics.max(this, axis); }
-    public NDArray argmin(int... axis) { return jnumpy.statistics.Statistics.argmin(this, axis); }
-    public NDArray argmax(int... axis) { return jnumpy.statistics.Statistics.argmax(this, axis); }
+    public NDArray sub(NDArray other) {
+        return UFunc.sub(this, other);
+    }
 
-    public NDArray matmul(NDArray other) { return jnumpy.linalg.Linalg.matmul(this, other); }
-    public NDArray dot(NDArray other) { return jnumpy.linalg.Linalg.dot(this, other); }
-    public double norm() { return jnumpy.linalg.Linalg.norm(this); }
-    public NDArray inverse() { return jnumpy.linalg.Linalg.inv(this); }
-    public double determinant() { return jnumpy.linalg.Linalg.det(this); }
+    public NDArray mul(NDArray other) {
+        return UFunc.mul(this, other);
+    }
+
+    public NDArray div(NDArray other) {
+        return UFunc.div(this, other);
+    }
+
+    public NDArray pow(NDArray other) {
+        return UFunc.pow(this, other);
+    }
+
+    public NDArray neg() {
+        return UFunc.neg(this);
+    }
+
+    public NDArray abs() {
+        return UFunc.abs(this);
+    }
+
+    public NDArray sqrt() {
+        return UFunc.sqrt(this);
+    }
+
+    public NDArray sin() {
+        return UFunc.sin(this);
+    }
+
+    public NDArray cos() {
+        return UFunc.cos(this);
+    }
+
+    public NDArray tan() {
+        return UFunc.tan(this);
+    }
+
+    public NDArray exp() {
+        return UFunc.exp(this);
+    }
+
+    public NDArray log() {
+        return UFunc.log(this);
+    }
+
+    public NDArray sum(int... axis) {
+        return jnumpy.statistics.Statistics.sum(this, axis);
+    }
+
+    public NDArray mean(int... axis) {
+        return jnumpy.statistics.Statistics.mean(this, axis);
+    }
+
+    public NDArray var(int... axis) {
+        return jnumpy.statistics.Statistics.var(this, axis);
+    }
+
+    public NDArray std(int... axis) {
+        return jnumpy.statistics.Statistics.std(this, axis);
+    }
+
+    public NDArray prod(int... axis) {
+        return jnumpy.statistics.Statistics.prod(this, axis);
+    }
+
+    public NDArray cumsum(int... axis) {
+        return jnumpy.statistics.Statistics.cumsum(this, axis);
+    }
+
+    public NDArray cumprod(int... axis) {
+        return jnumpy.statistics.Statistics.cumprod(this, axis);
+    }
+
+    public NDArray min(int... axis) {
+        return jnumpy.statistics.Statistics.min(this, axis);
+    }
+
+    public NDArray max(int... axis) {
+        return jnumpy.statistics.Statistics.max(this, axis);
+    }
+
+    public NDArray argmin(int... axis) {
+        return jnumpy.statistics.Statistics.argmin(this, axis);
+    }
+
+    public NDArray argmax(int... axis) {
+        return jnumpy.statistics.Statistics.argmax(this, axis);
+    }
+
+    public NDArray matmul(NDArray other) {
+        return jnumpy.linalg.Linalg.matmul(this, other);
+    }
+
+    public NDArray dot(NDArray other) {
+        return jnumpy.linalg.Linalg.dot(this, other);
+    }
+
+    public double norm() {
+        return jnumpy.linalg.Linalg.norm(this);
+    }
+
+    public NDArray inverse() {
+        return jnumpy.linalg.Linalg.inv(this);
+    }
+
+    public double determinant() {
+        return jnumpy.linalg.Linalg.det(this);
+    }
 
     public NDArray get(int... indices) {
         return Indexer.get(this, indices);
@@ -502,10 +705,8 @@ public final class NDArray {
         int rows = data.length;
         int cols = data[0].length;
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, (long) rows * cols);
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++)
-                buf.setDouble((long) i * cols + j, data[i][j]);
-        return new NDArray(buf, new int[]{ rows, cols }, DType.FLOAT64, 'C');
+        for (int i = 0; i < rows; i++) for (int j = 0; j < cols; j++) buf.setDouble((long) i * cols + j, data[i][j]);
+        return new NDArray(buf, new int[] {rows, cols}, DType.FLOAT64, 'C');
     }
 
     public static long sizeOfShape(int[] shape) {
@@ -523,8 +724,8 @@ public final class NDArray {
         NDArray flatThis = this.ravel();
         NDArray flatOther = other.ravel();
         for (long i = 0; i < size; i++) {
-            if (Double.compare(flatThis.getDouble(new int[]{ (int) i }),
-                    flatOther.getDouble(new int[]{ (int) i })) != 0) return false;
+            if (Double.compare(flatThis.getDouble(new int[] {(int) i}), flatOther.getDouble(new int[] {(int) i})) != 0)
+                return false;
         }
         return true;
     }
@@ -534,7 +735,7 @@ public final class NDArray {
         int result = Arrays.hashCode(shape);
         NDArray flat = ravel();
         for (long i = 0; i < Math.min(size, 10); i++) {
-            long v = Double.doubleToLongBits(flat.getDouble(new int[]{ (int) i }));
+            long v = Double.doubleToLongBits(flat.getDouble(new int[] {(int) i}));
             result = 31 * result + (int) (v ^ (v >>> 32));
         }
         return result;

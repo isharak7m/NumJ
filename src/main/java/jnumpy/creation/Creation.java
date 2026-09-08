@@ -1,9 +1,25 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.creation;
 
-import jnumpy.ndarray.NDArray;
+import java.util.function.IntToDoubleFunction;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
-import java.util.function.IntToDoubleFunction;
+import jnumpy.ndarray.NDArray;
 
 public final class Creation {
 
@@ -51,19 +67,16 @@ public final class Creation {
             int rows = arr2d.length;
             int cols = arr2d[0].length;
             MemoryBuffer buf = MemoryBuffer.allocate(DType.INT32, (long) rows * cols);
-            for (int i = 0; i < rows; i++)
-                for (int j = 0; j < cols; j++)
-                    buf.setInt((long) i * cols + j, arr2d[i][j]);
-            return new NDArray(buf, new int[]{ rows, cols }, DType.INT32, 'C');
+            for (int i = 0; i < rows; i++) for (int j = 0; j < cols; j++) buf.setInt((long) i * cols + j, arr2d[i][j]);
+            return new NDArray(buf, new int[] {rows, cols}, DType.INT32, 'C');
         }
         if (data instanceof double[][] arr2d) {
             int rows = arr2d.length;
             int cols = arr2d[0].length;
             MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, (long) rows * cols);
             for (int i = 0; i < rows; i++)
-                for (int j = 0; j < cols; j++)
-                    buf.setDouble((long) i * cols + j, arr2d[i][j]);
-            return new NDArray(buf, new int[]{ rows, cols }, DType.FLOAT64, 'C');
+                for (int j = 0; j < cols; j++) buf.setDouble((long) i * cols + j, arr2d[i][j]);
+            return new NDArray(buf, new int[] {rows, cols}, DType.FLOAT64, 'C');
         }
         throw new IllegalArgumentException("Unsupported array type: " + data.getClass());
     }
@@ -113,9 +126,8 @@ public final class Creation {
 
     public static NDArray eye(int rows, int cols) {
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, (long) rows * cols);
-        for (int i = 0; i < Math.min(rows, cols); i++)
-            buf.setDouble((long) i * cols + i, 1.0);
-        return new NDArray(buf, new int[]{ rows, cols }, DType.FLOAT64, 'C');
+        for (int i = 0; i < Math.min(rows, cols); i++) buf.setDouble((long) i * cols + i, 1.0);
+        return new NDArray(buf, new int[] {rows, cols}, DType.FLOAT64, 'C');
     }
 
     public static NDArray identity(int n) {
@@ -125,9 +137,8 @@ public final class Creation {
     public static NDArray diag(double[] diagonal) {
         int n = diagonal.length;
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, (long) n * n);
-        for (int i = 0; i < n; i++)
-            buf.setDouble((long) i * n + i, diagonal[i]);
-        return new NDArray(buf, new int[]{ n, n }, DType.FLOAT64, 'C');
+        for (int i = 0; i < n; i++) buf.setDouble((long) i * n + i, diagonal[i]);
+        return new NDArray(buf, new int[] {n, n}, DType.FLOAT64, 'C');
     }
 
     public static NDArray diag(NDArray v) {
@@ -176,7 +187,8 @@ public final class Creation {
     public static NDArray logspace(double start, double stop, int num) {
         NDArray linear = linspace(start, stop, num);
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, num);
-        for (long i = 0; i < num; i++) buf.setDouble(i, Math.pow(10, linear.buffer().getDouble(i)));
+        for (long i = 0; i < num; i++)
+            buf.setDouble(i, Math.pow(10, linear.buffer().getDouble(i)));
         return new NDArray(buf, DType.FLOAT64);
     }
 
@@ -197,9 +209,9 @@ public final class Creation {
                 yBuf.setDouble((long) i * nx + j, y.getDouble(i));
             }
         }
-        NDArray xResult = new NDArray(xBuf, new int[]{ ny, nx }, DType.FLOAT64, 'C');
-        NDArray yResult = new NDArray(yBuf, new int[]{ ny, nx }, DType.FLOAT64, 'C');
-        return new NDArray[]{ xResult, yResult };
+        NDArray xResult = new NDArray(xBuf, new int[] {ny, nx}, DType.FLOAT64, 'C');
+        NDArray yResult = new NDArray(yBuf, new int[] {ny, nx}, DType.FLOAT64, 'C');
+        return new NDArray[] {xResult, yResult};
     }
 
     public static NDArray fromFunction(IntToDoubleFunction f, int... shape) {

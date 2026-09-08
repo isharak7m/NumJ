@@ -1,11 +1,27 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.sort;
 
-import jnumpy.ndarray.NDArray;
-import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
-import jnumpy.util.Util;
 import java.util.Arrays;
 import java.util.Comparator;
+import jnumpy.dtype.DType;
+import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
+import jnumpy.util.Util;
 
 public final class Sort {
 
@@ -134,7 +150,7 @@ public final class Sort {
             if (data[i] != data[i - 1]) uniqueData[j++] = data[i];
         }
         MemoryBuffer buf = MemoryBuffer.wrap(uniqueData);
-        return new NDArray(buf, new int[]{ uniqueCount }, DType.FLOAT64, 'C');
+        return new NDArray(buf, new int[] {uniqueCount}, DType.FLOAT64, 'C');
     }
 
     public static NDArray searchsorted(NDArray a, double v) {
@@ -145,7 +161,7 @@ public final class Sort {
             if (Util.readBuffer(a.buffer(), a.dtype(), mid) < v) lo = mid + 1;
             else hi = mid;
         }
-        return NDArray.create(new double[]{ lo });
+        return NDArray.create(new double[] {lo});
     }
 
     public static NDArray partition(NDArray a, int kth, int axis) {
@@ -201,11 +217,15 @@ public final class Sort {
         int i = left;
         for (int j = left; j < right; j++) {
             if (arr[j] <= pivot) {
-                double tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+                double tmp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = tmp;
                 i++;
             }
         }
-        double tmp = arr[i]; arr[i] = arr[right]; arr[right] = tmp;
+        double tmp = arr[i];
+        arr[i] = arr[right];
+        arr[right] = tmp;
         return i;
     }
 }

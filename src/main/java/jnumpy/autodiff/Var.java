@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.autodiff;
 
 public final class Var {
@@ -10,8 +26,13 @@ public final class Var {
         this.tape = tape;
     }
 
-    int id() { return id; }
-    Tape tape() { return tape; }
+    int id() {
+        return id;
+    }
+
+    Tape tape() {
+        return tape;
+    }
 
     public double val() {
         return tape.getValue(id);
@@ -19,92 +40,92 @@ public final class Var {
 
     public Var add(Var other) {
         double result = val() + other.val();
-        int[] inputs = { id, other.id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "add", inputs, null));
+        int[] inputs = {id, other.id};
+        tape.addNode(new Tape.Node(new double[] {result}, "add", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var sub(Var other) {
         double result = val() - other.val();
-        int[] inputs = { id, other.id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "sub", inputs, null));
+        int[] inputs = {id, other.id};
+        tape.addNode(new Tape.Node(new double[] {result}, "sub", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var mul(Var other) {
         double result = val() * other.val();
-        int[] inputs = { id, other.id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "mul", inputs, null));
+        int[] inputs = {id, other.id};
+        tape.addNode(new Tape.Node(new double[] {result}, "mul", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var div(Var other) {
         double result = val() / other.val();
-        int[] inputs = { id, other.id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "div", inputs, null));
+        int[] inputs = {id, other.id};
+        tape.addNode(new Tape.Node(new double[] {result}, "div", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var neg() {
         double result = -val();
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "neg", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "neg", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var pow(double n) {
         double result = Math.pow(val(), n);
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "pow", inputs, new double[]{ n }));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "pow", inputs, new double[] {n}));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var sin() {
         double result = Math.sin(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "sin", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "sin", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var cos() {
         double result = Math.cos(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "cos", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "cos", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var tan() {
         double result = Math.tan(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "tan", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "tan", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var exp() {
         double result = Math.exp(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "exp", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "exp", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var log() {
         double result = Math.log(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "log", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "log", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var sqrt() {
         double result = Math.sqrt(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "sqrt", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "sqrt", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 
     public Var abs() {
         double result = Math.abs(val());
-        int[] inputs = { id };
-        tape.addNode(new Tape.Node(new double[]{ result }, "abs", inputs, null));
+        int[] inputs = {id};
+        tape.addNode(new Tape.Node(new double[] {result}, "abs", inputs, null));
         return new Var(tape.lastNodeId(), tape);
     }
 }

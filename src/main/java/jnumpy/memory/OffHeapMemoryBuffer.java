@@ -1,8 +1,24 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.memory;
 
-import jnumpy.dtype.DType;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import jnumpy.dtype.DType;
 
 final class OffHeapMemoryBuffer implements MemoryBuffer {
 
@@ -17,19 +33,29 @@ final class OffHeapMemoryBuffer implements MemoryBuffer {
     }
 
     @Override
-    public DType dtype() { return dtype; }
+    public DType dtype() {
+        return dtype;
+    }
 
     @Override
-    public long size() { return size; }
+    public long size() {
+        return size;
+    }
 
     @Override
-    public boolean isHeap() { return false; }
+    public boolean isHeap() {
+        return false;
+    }
 
     @Override
-    public boolean isOffHeap() { return true; }
+    public boolean isOffHeap() {
+        return true;
+    }
 
     @Override
-    public boolean isContiguous() { return true; }
+    public boolean isContiguous() {
+        return true;
+    }
 
     @Override
     public MemoryBuffer slice(long offset, long length) {
@@ -70,47 +96,103 @@ final class OffHeapMemoryBuffer implements MemoryBuffer {
     }
 
     @Override
-    public long elementSize() { return dtype.byteSize(); }
+    public long elementSize() {
+        return dtype.byteSize();
+    }
 
     @Override
-    public byte getByte(long index) { return buffer.get((int) (index * elementSize())); }
-    @Override
-    public short getShort(long index) { return buffer.getShort((int) (index * elementSize())); }
-    @Override
-    public int getInt(long index) { return buffer.getInt((int) (index * elementSize())); }
-    @Override
-    public long getLong(long index) { return buffer.getLong((int) (index * elementSize())); }
-    @Override
-    public float getFloat(long index) { return buffer.getFloat((int) (index * elementSize())); }
-    @Override
-    public double getDouble(long index) { return buffer.getDouble((int) (index * elementSize())); }
-    @Override
-    public boolean getBool(long index) { return buffer.get((int) (index * elementSize())) != 0; }
-    @Override
-    public char getChar(long index) { return buffer.getChar((int) (index * elementSize())); }
-    @Override
-    public String getString(long index) { return String.valueOf(getObject(index)); }
-    @Override
-    public Object getObject(long index) { return null; }
+    public byte getByte(long index) {
+        return buffer.get((int) (index * elementSize()));
+    }
 
     @Override
-    public void setByte(long index, byte value) { buffer.put((int) (index * elementSize()), value); }
+    public short getShort(long index) {
+        return buffer.getShort((int) (index * elementSize()));
+    }
+
     @Override
-    public void setShort(long index, short value) { buffer.putShort((int) (index * elementSize()), value); }
+    public int getInt(long index) {
+        return buffer.getInt((int) (index * elementSize()));
+    }
+
     @Override
-    public void setInt(long index, int value) { buffer.putInt((int) (index * elementSize()), value); }
+    public long getLong(long index) {
+        return buffer.getLong((int) (index * elementSize()));
+    }
+
     @Override
-    public void setLong(long index, long value) { buffer.putLong((int) (index * elementSize()), value); }
+    public float getFloat(long index) {
+        return buffer.getFloat((int) (index * elementSize()));
+    }
+
     @Override
-    public void setFloat(long index, float value) { buffer.putFloat((int) (index * elementSize()), value); }
+    public double getDouble(long index) {
+        return buffer.getDouble((int) (index * elementSize()));
+    }
+
     @Override
-    public void setDouble(long index, double value) { buffer.putDouble((int) (index * elementSize()), value); }
+    public boolean getBool(long index) {
+        return buffer.get((int) (index * elementSize())) != 0;
+    }
+
     @Override
-    public void setBool(long index, boolean value) { buffer.put((int) (index * elementSize()), (byte) (value ? 1 : 0)); }
+    public char getChar(long index) {
+        return buffer.getChar((int) (index * elementSize()));
+    }
+
     @Override
-    public void setChar(long index, char value) { buffer.putChar((int) (index * elementSize()), value); }
+    public String getString(long index) {
+        return String.valueOf(getObject(index));
+    }
+
     @Override
-    public void setString(long index, String value) { }
+    public Object getObject(long index) {
+        return null;
+    }
+
     @Override
-    public void setObject(long index, Object value) { }
+    public void setByte(long index, byte value) {
+        buffer.put((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setShort(long index, short value) {
+        buffer.putShort((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setInt(long index, int value) {
+        buffer.putInt((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setLong(long index, long value) {
+        buffer.putLong((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setFloat(long index, float value) {
+        buffer.putFloat((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setDouble(long index, double value) {
+        buffer.putDouble((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setBool(long index, boolean value) {
+        buffer.put((int) (index * elementSize()), (byte) (value ? 1 : 0));
+    }
+
+    @Override
+    public void setChar(long index, char value) {
+        buffer.putChar((int) (index * elementSize()), value);
+    }
+
+    @Override
+    public void setString(long index, String value) {}
+
+    @Override
+    public void setObject(long index, Object value) {}
 }

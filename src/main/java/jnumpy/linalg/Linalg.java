@@ -1,8 +1,23 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.linalg;
 
-import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
 import jnumpy.util.Util;
 
 public final class Linalg {
@@ -11,12 +26,12 @@ public final class Linalg {
 
     private static void checkSquare(NDArray a) {
         if (a.ndim() != 2 || a.shape(0) != a.shape(1))
-            throw new IllegalArgumentException("Expected square matrix, got shape [" + a.shape(0) + ", " + a.shape(1) + "]");
+            throw new IllegalArgumentException(
+                    "Expected square matrix, got shape [" + a.shape(0) + ", " + a.shape(1) + "]");
     }
 
     private static void check2D(NDArray a) {
-        if (a.ndim() != 2)
-            throw new IllegalArgumentException("Expected 2D array, got " + a.ndim() + "D");
+        if (a.ndim() != 2) throw new IllegalArgumentException("Expected 2D array, got " + a.ndim() + "D");
     }
 
     public static NDArray dot(NDArray a, NDArray b) {
@@ -24,13 +39,13 @@ public final class Linalg {
             if (a.size() != b.size()) throw new IllegalArgumentException("Incompatible sizes for dot product");
             double sum = 0;
             for (long i = 0; i < a.size(); i++) sum += Util.readElement(a, (int) i) * Util.readElement(b, (int) i);
-            return NDArray.create(new double[]{ sum });
+            return NDArray.create(new double[] {sum});
         }
         if (a.ndim() == 2 && b.ndim() == 2) return matmul(a, b);
         if (a.ndim() == 2 && b.ndim() == 1) {
             if (a.shape(1) != b.size()) throw new IllegalArgumentException("Incompatible shapes for dot");
             int m = a.shape(0), n = a.shape(1);
-            NDArray result = NDArray.create(new int[]{ m }, DType.FLOAT64);
+            NDArray result = NDArray.create(new int[] {m}, DType.FLOAT64);
             for (int i = 0; i < m; i++) {
                 double sum = 0;
                 for (int j = 0; j < n; j++) sum += Util.readElement(a, i, j) * Util.readElement(b, j);
@@ -41,7 +56,7 @@ public final class Linalg {
         if (a.ndim() == 1 && b.ndim() == 2) {
             if (a.size() != b.shape(0)) throw new IllegalArgumentException("Incompatible shapes for dot");
             int n = b.shape(1);
-            NDArray result = NDArray.create(new int[]{ n }, DType.FLOAT64);
+            NDArray result = NDArray.create(new int[] {n}, DType.FLOAT64);
             for (int j = 0; j < n; j++) {
                 double sum = 0;
                 for (int i = 0; i < a.size(); i++) sum += Util.readElement(a, i) * Util.readElement(b, i, j);
@@ -57,7 +72,7 @@ public final class Linalg {
         check2D(b);
         int m = a.shape(0), k = a.shape(1), n = b.shape(1);
         if (k != b.shape(0)) throw new IllegalArgumentException("Incompatible shapes for matmul");
-        NDArray result = NDArray.create(new int[]{ m, n }, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[] {m, n}, DType.FLOAT64);
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
                 double sum = 0;
@@ -72,9 +87,10 @@ public final class Linalg {
         if (a.ndim() == 1 && b.ndim() == 1) return dot(a, b);
         if (a.ndim() == 2 && b.ndim() == 2) {
             if (a.shape(1) != b.shape(1))
-                throw new IllegalArgumentException("inner requires matching last dimensions: " + a.shape(1) + " vs " + b.shape(1));
+                throw new IllegalArgumentException(
+                        "inner requires matching last dimensions: " + a.shape(1) + " vs " + b.shape(1));
             int m = a.shape(0), n = b.shape(0), k = a.shape(1);
-            NDArray result = NDArray.create(new int[]{ m, n }, DType.FLOAT64);
+            NDArray result = NDArray.create(new int[] {m, n}, DType.FLOAT64);
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
                     double sum = 0;
@@ -84,26 +100,24 @@ public final class Linalg {
             }
             return result;
         }
-        throw new IllegalArgumentException("inner requires 1D or 2D arrays, got " + a.ndim() + "D and " + b.ndim() + "D");
+        throw new IllegalArgumentException(
+                "inner requires 1D or 2D arrays, got " + a.ndim() + "D and " + b.ndim() + "D");
     }
 
     public static NDArray outer(NDArray a, NDArray b) {
         if (a.ndim() != 1 || b.ndim() != 1)
             throw new IllegalArgumentException("outer requires 1D arrays, got " + a.ndim() + "D and " + b.ndim() + "D");
         int m = (int) a.size(), n = (int) b.size();
-        NDArray result = NDArray.create(new int[]{ m, n }, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[] {m, n}, DType.FLOAT64);
         for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                result.setDouble(Util.readElement(a, i) * Util.readElement(b, j), i, j);
+            for (int j = 0; j < n; j++) result.setDouble(Util.readElement(a, i) * Util.readElement(b, j), i, j);
         return result;
     }
 
     public static NDArray cross(NDArray a, NDArray b) {
-        if (a.ndim() != 1 || b.ndim() != 1)
-            throw new IllegalArgumentException("cross requires 1D arrays");
-        if (a.size() != 3 || b.size() != 3)
-            throw new IllegalArgumentException("cross requires size-3 vectors");
-        NDArray result = NDArray.create(new int[]{ 3 }, DType.FLOAT64);
+        if (a.ndim() != 1 || b.ndim() != 1) throw new IllegalArgumentException("cross requires 1D arrays");
+        if (a.size() != 3 || b.size() != 3) throw new IllegalArgumentException("cross requires size-3 vectors");
+        NDArray result = NDArray.create(new int[] {3}, DType.FLOAT64);
         double a0 = Util.readElement(a, 0), a1 = Util.readElement(a, 1), a2 = Util.readElement(a, 2);
         double b0 = Util.readElement(b, 0), b1 = Util.readElement(b, 1), b2 = Util.readElement(b, 2);
         result.setDouble(a1 * b2 - a2 * b1, 0);
@@ -135,11 +149,16 @@ public final class Linalg {
             double maxVal = Math.abs(aug[col][col]);
             for (int row = col + 1; row < n; row++) {
                 double v = Math.abs(aug[row][col]);
-                if (v > maxVal) { maxVal = v; maxRow = row; }
+                if (v > maxVal) {
+                    maxVal = v;
+                    maxRow = row;
+                }
             }
             if (maxVal < 1e-15)
                 throw new IllegalArgumentException("Matrix is singular (zero pivot at column " + col + ")");
-            double[] temp = aug[col]; aug[col] = aug[maxRow]; aug[maxRow] = temp;
+            double[] temp = aug[col];
+            aug[col] = aug[maxRow];
+            aug[maxRow] = temp;
             double pivot = aug[col][col];
             for (int j = 0; j < 2 * n; j++) aug[col][j] /= pivot;
             for (int row = 0; row < n; row++) {
@@ -149,9 +168,7 @@ public final class Linalg {
             }
         }
         double[][] inv = new double[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                inv[i][j] = aug[i][n + j];
+        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) inv[i][j] = aug[i][n + j];
         return fromMatrix(inv);
     }
 
@@ -159,15 +176,15 @@ public final class Linalg {
         checkSquare(a);
         int n = a.shape(0);
         double[][] M = new double[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++) M[i][j] = Util.readElement(a, i, j);
+        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) M[i][j] = Util.readElement(a, i, j);
         double det = 1;
         for (int col = 0; col < n; col++) {
             int maxRow = col;
-            for (int row = col + 1; row < n; row++)
-                if (Math.abs(M[row][col]) > Math.abs(M[maxRow][col])) maxRow = row;
+            for (int row = col + 1; row < n; row++) if (Math.abs(M[row][col]) > Math.abs(M[maxRow][col])) maxRow = row;
             if (maxRow != col) {
-                double[] temp = M[col]; M[col] = M[maxRow]; M[maxRow] = temp;
+                double[] temp = M[col];
+                M[col] = M[maxRow];
+                M[maxRow] = temp;
                 det = -det;
             }
             double pivot = M[col][col];
@@ -185,18 +202,14 @@ public final class Linalg {
         check2D(a);
         int m = a.shape(0), n = a.shape(1);
         double[][] result = new double[m][n];
-        for (int i = 0; i < m; i++)
-            for (int j = 0; j < n; j++)
-                result[i][j] = Util.readElement(a, i, j);
+        for (int i = 0; i < m; i++) for (int j = 0; j < n; j++) result[i][j] = Util.readElement(a, i, j);
         return result;
     }
 
     private static NDArray fromMatrix(double[][] m) {
         int rows = m.length, cols = m[0].length;
-        NDArray result = NDArray.create(new int[]{ rows, cols }, DType.FLOAT64);
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++)
-                Util.writeElement(result, m[i][j], i, j);
+        NDArray result = NDArray.create(new int[] {rows, cols}, DType.FLOAT64);
+        for (int i = 0; i < rows; i++) for (int j = 0; j < cols; j++) Util.writeElement(result, m[i][j], i, j);
         return result;
     }
 }

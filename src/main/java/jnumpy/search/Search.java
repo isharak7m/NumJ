@@ -1,8 +1,24 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.search;
 
-import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
 import jnumpy.util.Util;
 
 public final class Search {
@@ -30,21 +46,21 @@ public final class Search {
     }
 
     public static NDArray nonzero(NDArray a) {
-        if (a.size() == 0) return NDArray.create(new int[]{ 0 }, DType.INT64);
+        if (a.size() == 0) return NDArray.create(new int[] {0}, DType.INT64);
         NDArray flat = a.ravel();
         int count = 0;
-        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[]{ (int) i })) count++;
+        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[] {(int) i})) count++;
         long[] result = new long[count];
         int idx = 0;
-        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[]{ (int) i })) result[idx++] = i;
+        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[] {(int) i})) result[idx++] = i;
         return new NDArray(MemoryBuffer.wrap(result), DType.INT64);
     }
 
     public static NDArray argwhere(NDArray a) {
-        if (a.size() == 0) return NDArray.create(new int[]{ 0, a.ndim() }, DType.INT64);
+        if (a.size() == 0) return NDArray.create(new int[] {0, a.ndim()}, DType.INT64);
         NDArray flat = a.ravel();
         int count = 0;
-        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[]{ (int) i })) count++;
+        for (long i = 0; i < flat.size(); i++) if (flat.getBoolean(new int[] {(int) i})) count++;
         long[] flatResult = new long[count * a.ndim()];
         int idx = 0;
         int[] indices = new int[a.ndim()];
@@ -59,7 +75,7 @@ public final class Search {
                 idx++;
             }
         }
-        return new NDArray(MemoryBuffer.wrap(flatResult), new int[]{ count, a.ndim() }, DType.INT64, 'C');
+        return new NDArray(MemoryBuffer.wrap(flatResult), new int[] {count, a.ndim()}, DType.INT64, 'C');
     }
 
     public static NDArray isin(NDArray element, NDArray testElements) {
@@ -82,7 +98,7 @@ public final class Search {
     }
 
     public static NDArray intersect1d(NDArray a, NDArray b) {
-        if (a.size() == 0 || b.size() == 0) return NDArray.create(new int[]{ 0 }, DType.FLOAT64);
+        if (a.size() == 0 || b.size() == 0) return NDArray.create(new int[] {0}, DType.FLOAT64);
         NDArray sa = jnumpy.sort.Sort.sort(a);
         NDArray sb = jnumpy.sort.Sort.sort(b);
         java.util.ArrayList<Double> common = new java.util.ArrayList<>();
@@ -106,7 +122,7 @@ public final class Search {
     }
 
     public static NDArray union1d(NDArray a, NDArray b) {
-        if (a.size() == 0 && b.size() == 0) return NDArray.create(new int[]{ 0 }, DType.FLOAT64);
+        if (a.size() == 0 && b.size() == 0) return NDArray.create(new int[] {0}, DType.FLOAT64);
         if (a.size() == 0) return jnumpy.sort.Sort.sort(b).ravel();
         if (b.size() == 0) return jnumpy.sort.Sort.sort(a).ravel();
         NDArray sa = jnumpy.sort.Sort.sort(a);
@@ -125,7 +141,8 @@ public final class Search {
                 j++;
             } else {
                 if (merged.isEmpty() || merged.get(merged.size() - 1) != va) merged.add(va);
-                i++; j++;
+                i++;
+                j++;
             }
         }
         double[] result = new double[merged.size()];
@@ -134,7 +151,7 @@ public final class Search {
     }
 
     public static NDArray setdiff1d(NDArray a, NDArray b) {
-        if (a.size() == 0) return NDArray.create(new int[]{ 0 }, DType.FLOAT64);
+        if (a.size() == 0) return NDArray.create(new int[] {0}, DType.FLOAT64);
         if (b.size() == 0) return jnumpy.sort.Sort.sort(a).ravel();
         NDArray sa = jnumpy.sort.Sort.sort(a);
         NDArray sb = jnumpy.sort.Sort.sort(b);
@@ -156,21 +173,18 @@ public final class Search {
         NDArray flatCond = condition.ravel();
         NDArray flatA = a.ravel();
         int count = 0;
-        for (long i = 0; i < flatCond.size(); i++)
-            if (flatCond.getBoolean(new int[]{ (int) i })) count++;
+        for (long i = 0; i < flatCond.size(); i++) if (flatCond.getBoolean(new int[] {(int) i})) count++;
         double[] result = new double[count];
         int idx = 0;
         int nf = (int) flatCond.size();
-        for (int i = 0; i < nf; i++)
-            if (flatCond.getBoolean(new int[]{ i })) result[idx++] = Util.readElement(flatA, i);
+        for (int i = 0; i < nf; i++) if (flatCond.getBoolean(new int[] {i})) result[idx++] = Util.readElement(flatA, i);
         return new NDArray(MemoryBuffer.wrap(result), DType.FLOAT64);
     }
 
     public static NDArray compress(NDArray condition, NDArray a, int axis) {
         NDArray flatCond = condition.ravel();
         int count = 0;
-        for (long i = 0; i < flatCond.size(); i++)
-            if (flatCond.getBoolean(new int[]{ (int) i })) count++;
+        for (long i = 0; i < flatCond.size(); i++) if (flatCond.getBoolean(new int[] {(int) i})) count++;
         int[] newShape = a.shape().clone();
         newShape[axis] = count;
         NDArray result = NDArray.create(newShape, a.dtype());

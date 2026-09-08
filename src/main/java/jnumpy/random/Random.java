@@ -1,14 +1,28 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.random;
 
-import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
-import java.util.concurrent.ThreadLocalRandom;
+import jnumpy.ndarray.NDArray;
 
 public final class Random {
 
-    private static final ThreadLocal<java.util.Random> generators =
-            ThreadLocal.withInitial(java.util.Random::new);
+    private static final ThreadLocal<java.util.Random> generators = ThreadLocal.withInitial(java.util.Random::new);
 
     private Random() {}
 
@@ -27,8 +41,7 @@ public final class Random {
     public static NDArray randn(int... shape) {
         long size = NDArray.sizeOfShape(shape);
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, size);
-        for (long i = 0; i < size; i++)
-            buf.setDouble(i, generators.get().nextGaussian());
+        for (long i = 0; i < size; i++) buf.setDouble(i, generators.get().nextGaussian());
         return new NDArray(buf, shape, DType.FLOAT64, 'C');
     }
 
@@ -43,8 +56,7 @@ public final class Random {
     public static NDArray randint(int low, int high, int... shape) {
         long size = NDArray.sizeOfShape(shape);
         MemoryBuffer buf = MemoryBuffer.allocate(DType.INT64, size);
-        for (long i = 0; i < size; i++)
-            buf.setLong(i, low + generators.get().nextInt(high - low));
+        for (long i = 0; i < size; i++) buf.setLong(i, low + generators.get().nextInt(high - low));
         return new NDArray(buf, shape, DType.INT64, 'C');
     }
 
@@ -79,8 +91,7 @@ public final class Random {
     public static NDArray gamma(double shape, double scale, int... outShape) {
         long size = NDArray.sizeOfShape(outShape);
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, size);
-        for (long i = 0; i < size; i++)
-            buf.setDouble(i, sampleGamma(shape, scale));
+        for (long i = 0; i < size; i++) buf.setDouble(i, sampleGamma(shape, scale));
         return new NDArray(buf, outShape, DType.FLOAT64, 'C');
     }
 
@@ -100,8 +111,7 @@ public final class Random {
         MemoryBuffer buf = MemoryBuffer.allocate(DType.FLOAT64, size);
         for (long i = 0; i < size; i++) {
             int count = 0;
-            for (int j = 0; j < n; j++)
-                if (generators.get().nextDouble() < p) count++;
+            for (int j = 0; j < n; j++) if (generators.get().nextDouble() < p) count++;
             buf.setDouble(i, count);
         }
         return new NDArray(buf, shape, DType.FLOAT64, 'C');
@@ -109,7 +119,7 @@ public final class Random {
 
     public static NDArray choice(NDArray a, int size, boolean replace) {
         int n = (int) a.size();
-        NDArray result = NDArray.create(new int[]{ size }, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[] {size}, DType.FLOAT64);
         if (replace) {
             for (int i = 0; i < size; i++)
                 result.setDouble(a.getDouble(generators.get().nextInt(n)), i);
@@ -137,7 +147,7 @@ public final class Random {
     }
 
     public static NDArray permutation(int n) {
-        NDArray result = NDArray.create(new int[]{ n }, DType.FLOAT64);
+        NDArray result = NDArray.create(new int[] {n}, DType.FLOAT64);
         for (int i = 0; i < n; i++) result.setDouble(i, i);
         return shuffle(result);
     }

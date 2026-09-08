@@ -1,42 +1,90 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.memory;
 
-import jnumpy.dtype.DType;
 import java.nio.ByteBuffer;
+import jnumpy.dtype.DType;
 
-public sealed interface MemoryBuffer permits HeapMemoryBuffer.ByteBuffer, HeapMemoryBuffer.ShortBuffer,
-        HeapMemoryBuffer.IntBuffer, HeapMemoryBuffer.LongBuffer, HeapMemoryBuffer.FloatBuffer,
-        HeapMemoryBuffer.DoubleBuffer, HeapMemoryBuffer.BoolBuffer, HeapMemoryBuffer.CharBuffer,
-        HeapMemoryBuffer.ObjectBuffer, OffHeapMemoryBuffer {
+public sealed interface MemoryBuffer
+        permits HeapMemoryBuffer.ByteBuffer,
+                HeapMemoryBuffer.ShortBuffer,
+                HeapMemoryBuffer.IntBuffer,
+                HeapMemoryBuffer.LongBuffer,
+                HeapMemoryBuffer.FloatBuffer,
+                HeapMemoryBuffer.DoubleBuffer,
+                HeapMemoryBuffer.BoolBuffer,
+                HeapMemoryBuffer.CharBuffer,
+                HeapMemoryBuffer.ObjectBuffer,
+                OffHeapMemoryBuffer {
 
     DType dtype();
+
     long size();
-    boolean isHeap();   
+
+    boolean isHeap();
+
     boolean isOffHeap();
+
     boolean isContiguous();
+
     MemoryBuffer slice(long offset, long length);
+
     MemoryBuffer duplicate();
+
     MemoryBuffer copy(DType dtype);
 
     byte getByte(long index);
+
     short getShort(long index);
+
     int getInt(long index);
+
     long getLong(long index);
+
     float getFloat(long index);
+
     double getDouble(long index);
+
     boolean getBool(long index);
+
     char getChar(long index);
+
     String getString(long index);
+
     Object getObject(long index);
 
     void setByte(long index, byte value);
+
     void setShort(long index, short value);
+
     void setInt(long index, int value);
+
     void setLong(long index, long value);
+
     void setFloat(long index, float value);
+
     void setDouble(long index, double value);
+
     void setBool(long index, boolean value);
+
     void setChar(long index, char value);
+
     void setString(long index, String value);
+
     void setObject(long index, Object value);
 
     long elementSize();

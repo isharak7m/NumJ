@@ -1,9 +1,23 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.broadcast;
 
-import jnumpy.ndarray.NDArray;
-import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
 import java.util.Arrays;
+import jnumpy.ndarray.NDArray;
 
 public final class Broadcast {
 
@@ -20,8 +34,7 @@ public final class Broadcast {
                 int dim = shape[shape.length - 1 - i];
                 int resIdx = maxDim - 1 - i;
                 if (dim != 1 && result[resIdx] != 1 && result[resIdx] != dim) {
-                    throw new IllegalArgumentException(
-                            "Cannot broadcast shapes: " + Arrays.deepToString(shapes));
+                    throw new IllegalArgumentException("Cannot broadcast shapes: " + Arrays.deepToString(shapes));
                 }
                 result[resIdx] = Math.max(result[resIdx], dim);
             }
@@ -50,8 +63,8 @@ public final class Broadcast {
             if (paddedShape[i] == 1 && targetShape[i] > 1) {
                 newStrides[i] = 0;
             } else if (paddedShape[i] != targetShape[i]) {
-                throw new IllegalArgumentException(
-                        "Cannot broadcast shape " + Arrays.toString(arrayShape) + " to " + Arrays.toString(targetShape));
+                throw new IllegalArgumentException("Cannot broadcast shape " + Arrays.toString(arrayShape) + " to "
+                        + Arrays.toString(targetShape));
             } else {
                 newStrides[i] = paddedStrides[i];
             }
@@ -105,9 +118,17 @@ public final class Broadcast {
             this.bStrides = bPadStrides;
         }
 
-        public int[] shape() { return shape.clone(); }
-        public long size() { return size; }
-        public int ndim() { return ndim; }
+        public int[] shape() {
+            return shape.clone();
+        }
+
+        public long size() {
+            return size;
+        }
+
+        public int ndim() {
+            return ndim;
+        }
 
         public long aIndex(long flat) {
             long idx = a.offset();

@@ -1,11 +1,27 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.indexing;
 
-import jnumpy.ndarray.NDArray;
-import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
-import jnumpy.broadcast.Broadcast;
 import java.util.ArrayList;
 import java.util.List;
+import jnumpy.broadcast.Broadcast;
+import jnumpy.dtype.DType;
+import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
 
 public final class Indexer {
 
@@ -118,7 +134,10 @@ public final class Indexer {
         return new NDArray(
                 resultShape.stream().mapToInt(Integer::intValue).toArray(),
                 resultStrides.stream().mapToLong(Long::longValue).toArray(),
-                array.dtype(), offset, array.buffer(), true);
+                array.dtype(),
+                offset,
+                array.buffer(),
+                true);
     }
 
     public static NDArray set(NDArray array, NDArray value, int... indices) {
@@ -128,8 +147,7 @@ public final class Indexer {
         int[] bShape = Broadcast.broadcastShape(vShape, targetShape);
         NDArray broadcastValue = Broadcast.broadcastTo(value, bShape);
         NDArray broadcastTarget = Broadcast.broadcastTo(view, bShape);
-        Broadcast.BroadcastIterator it =
-                new Broadcast.BroadcastIterator(broadcastValue, broadcastTarget, bShape);
+        Broadcast.BroadcastIterator it = new Broadcast.BroadcastIterator(broadcastValue, broadcastTarget, bShape);
         it.forEach((flat, aOff, bOff) -> {
             double val = readBuffer(value.buffer(), value.dtype(), aOff);
             writeBuffer(array.buffer(), array.dtype(), bOff, val);
@@ -187,11 +205,11 @@ public final class Indexer {
     public static NDArray booleanIndex(NDArray array, NDArray mask) {
         int count = 0;
         for (long i = 0; i < mask.size(); i++) {
-            if (mask.getBoolean(new int[]{ (int) i })) count++;
+            if (mask.getBoolean(new int[] {(int) i})) count++;
         }
         int[] resultShape;
         if (array.ndim() == 1) {
-            resultShape = new int[]{ count };
+            resultShape = new int[] {count};
         } else {
             resultShape = new int[array.ndim()];
             resultShape[0] = count;
@@ -202,7 +220,7 @@ public final class Indexer {
         int[] dstIdx = new int[array.ndim()];
         int dst = 0;
         for (long i = 0; i < mask.size(); i++) {
-            if (mask.getBoolean(new int[]{ (int) i })) {
+            if (mask.getBoolean(new int[] {(int) i})) {
                 array.indices(i, srcIdx);
                 dstIdx[0] = dst++;
                 for (int d = 1; d < array.ndim(); d++) dstIdx[d] = srcIdx[d];
@@ -215,6 +233,7 @@ public final class Indexer {
 
     public static class ShapeHelper {
         private ShapeHelper() {}
+
         public static int[] broadcastShape(int[]... shapes) {
             int maxDim = 0;
             for (int[] s : shapes) maxDim = Math.max(maxDim, s.length);

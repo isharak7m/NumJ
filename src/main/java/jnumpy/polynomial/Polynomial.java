@@ -1,8 +1,24 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.polynomial;
 
-import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
 import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
 import jnumpy.util.Util;
 
 public final class Polynomial {
@@ -65,8 +81,7 @@ public final class Polynomial {
         int na = (int) a.size(), nb = (int) b.size();
         double[] result = new double[na + nb - 1];
         for (int i = 0; i < na; i++)
-            for (int j = 0; j < nb; j++)
-                result[i + j] += Util.readElement(a, i) * Util.readElement(b, j);
+            for (int j = 0; j < nb; j++) result[i + j] += Util.readElement(a, i) * Util.readElement(b, j);
         return new NDArray(MemoryBuffer.wrap(result), DType.FLOAT64);
     }
 
@@ -82,8 +97,7 @@ public final class Polynomial {
         for (int i = 0; i < nq; i++) {
             if (Math.abs(dividend[na - 1 - i]) < 1e-15) continue;
             quotient[nq - 1 - i] = dividend[na - 1 - i] / divisor[nb - 1];
-            for (int j = 0; j < nb; j++)
-                dividend[na - 1 - i - j] -= quotient[nq - 1 - i] * divisor[nb - 1 - j];
+            for (int j = 0; j < nb; j++) dividend[na - 1 - i - j] -= quotient[nq - 1 - i] * divisor[nb - 1 - j];
         }
         return new NDArray(MemoryBuffer.wrap(quotient), DType.FLOAT64);
     }
@@ -99,7 +113,9 @@ public final class Polynomial {
             int maxRow = col;
             for (int row = col + 1; row < n; row++)
                 if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
-            double[] temp = aug[col]; aug[col] = aug[maxRow]; aug[maxRow] = temp;
+            double[] temp = aug[col];
+            aug[col] = aug[maxRow];
+            aug[maxRow] = temp;
             double pivot = aug[col][col];
             for (int j = col; j <= n; j++) aug[col][j] /= pivot;
             for (int row = 0; row < n; row++) {

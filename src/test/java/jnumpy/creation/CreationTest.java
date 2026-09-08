@@ -1,23 +1,40 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.creation;
 
-import jnumpy.ndarray.NDArray;
-import jnumpy.dtype.DType;
 import static org.junit.jupiter.api.Assertions.*;
+
+import jnumpy.dtype.DType;
+import jnumpy.ndarray.NDArray;
 import org.junit.jupiter.api.Test;
 
 class CreationTest {
 
     @Test
     void testArrayFrom1D() {
-        NDArray a = Creation.array(new double[]{1.0, 2.0, 3.0});
+        NDArray a = Creation.array(new double[] {1.0, 2.0, 3.0});
         assertEquals(3, a.size());
         assertEquals(1.0, a.getDouble(0), 1e-15);
     }
 
     @Test
     void testArrayFrom2D() {
-        NDArray a = Creation.array(new double[][]{{1.0, 2.0}, {3.0, 4.0}});
-        assertArrayEquals(new int[]{2, 2}, a.shape());
+        NDArray a = Creation.array(new double[][] {{1.0, 2.0}, {3.0, 4.0}});
+        assertArrayEquals(new int[] {2, 2}, a.shape());
         assertEquals(4.0, a.getDouble(1, 1), 1e-15);
     }
 
@@ -62,7 +79,7 @@ class CreationTest {
 
     @Test
     void testFull() {
-        NDArray a = Creation.full(new int[]{2, 2}, 3.14, DType.FLOAT64);
+        NDArray a = Creation.full(new int[] {2, 2}, 3.14, DType.FLOAT64);
         assertEquals(3.14, a.getDouble(0, 0), 1e-15);
         assertEquals(3.14, a.getDouble(1, 1), 1e-15);
     }

@@ -1,13 +1,43 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.dtype;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public sealed interface DType permits DType.BoolType, DType.Int8Type, DType.Int16Type, DType.Int32Type, DType.Int64Type,
-        DType.UInt8Type, DType.UInt16Type, DType.UInt32Type, DType.UInt64Type, DType.Float16Type, DType.Float32Type,
-        DType.Float64Type, DType.Complex64Type, DType.Complex128Type, DType.CharType, DType.StringType,
-        DType.ObjectType {
+public sealed interface DType
+        permits DType.BoolType,
+                DType.Int8Type,
+                DType.Int16Type,
+                DType.Int32Type,
+                DType.Int64Type,
+                DType.UInt8Type,
+                DType.UInt16Type,
+                DType.UInt32Type,
+                DType.UInt64Type,
+                DType.Float16Type,
+                DType.Float32Type,
+                DType.Float64Type,
+                DType.Complex64Type,
+                DType.Complex128Type,
+                DType.CharType,
+                DType.StringType,
+                DType.ObjectType {
 
     enum Kind {
         BOOL,
@@ -21,289 +51,1168 @@ public sealed interface DType permits DType.BoolType, DType.Int8Type, DType.Int1
     }
 
     String name();
+
     Kind kind();
+
     int byteSize();
+
     boolean isInteger();
+
     boolean isFloat();
+
     boolean isComplex();
+
     boolean isSigned();
+
     boolean isUnsigned();
+
     boolean isNumeric();
+
     boolean isBuiltin();
+
     Class<?> javaType();
+
     Object defaultValue();
+
     DType promotedWith(DType other);
 
     record BoolType() implements DType {
-        @Override public String name() { return "bool"; }
-        @Override public Kind kind() { return Kind.BOOL; }
-        @Override public int byteSize() { return 1; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return false; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return boolean.class; }
-        @Override public Object defaultValue() { return false; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "bool";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.BOOL;
+        }
+
+        @Override
+        public int byteSize() {
+            return 1;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return false;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return boolean.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return false;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Int8Type() implements DType {
-        @Override public String name() { return "int8"; }
-        @Override public Kind kind() { return Kind.SIGNED_INT; }
-        @Override public int byteSize() { return 1; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return byte.class; }
-        @Override public Object defaultValue() { return (byte)0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "int8";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.SIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 1;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return byte.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return (byte) 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Int16Type() implements DType {
-        @Override public String name() { return "int16"; }
-        @Override public Kind kind() { return Kind.SIGNED_INT; }
-        @Override public int byteSize() { return 2; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return short.class; }
-        @Override public Object defaultValue() { return (short)0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "int16";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.SIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return short.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return (short) 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Int32Type() implements DType {
-        @Override public String name() { return "int32"; }
-        @Override public Kind kind() { return Kind.SIGNED_INT; }
-        @Override public int byteSize() { return 4; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return int.class; }
-        @Override public Object defaultValue() { return 0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "int32";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.SIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 4;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return int.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Int64Type() implements DType {
-        @Override public String name() { return "int64"; }
-        @Override public Kind kind() { return Kind.SIGNED_INT; }
-        @Override public int byteSize() { return 8; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return long.class; }
-        @Override public Object defaultValue() { return 0L; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "int64";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.SIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 8;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return long.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0L;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record UInt8Type() implements DType {
-        @Override public String name() { return "uint8"; }
-        @Override public Kind kind() { return Kind.UNSIGNED_INT; }
-        @Override public int byteSize() { return 1; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return true; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return byte.class; }
-        @Override public Object defaultValue() { return (byte)0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "uint8";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.UNSIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 1;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return byte.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return (byte) 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record UInt16Type() implements DType {
-        @Override public String name() { return "uint16"; }
-        @Override public Kind kind() { return Kind.UNSIGNED_INT; }
-        @Override public int byteSize() { return 2; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return true; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return short.class; }
-        @Override public Object defaultValue() { return (short)0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "uint16";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.UNSIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return short.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return (short) 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record UInt32Type() implements DType {
-        @Override public String name() { return "uint32"; }
-        @Override public Kind kind() { return Kind.UNSIGNED_INT; }
-        @Override public int byteSize() { return 4; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return true; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return int.class; }
-        @Override public Object defaultValue() { return 0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "uint32";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.UNSIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 4;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return int.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record UInt64Type() implements DType {
-        @Override public String name() { return "uint64"; }
-        @Override public Kind kind() { return Kind.UNSIGNED_INT; }
-        @Override public int byteSize() { return 8; }
-        @Override public boolean isInteger() { return true; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return true; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return long.class; }
-        @Override public Object defaultValue() { return 0L; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "uint64";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.UNSIGNED_INT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 8;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return true;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return long.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0L;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Float16Type() implements DType {
-        @Override public String name() { return "float16"; }
-        @Override public Kind kind() { return Kind.FLOAT; }
-        @Override public int byteSize() { return 2; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return true; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return short.class; }
-        @Override public Object defaultValue() { return (short)0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "float16";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.FLOAT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return true;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return short.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return (short) 0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Float32Type() implements DType {
-        @Override public String name() { return "float32"; }
-        @Override public Kind kind() { return Kind.FLOAT; }
-        @Override public int byteSize() { return 4; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return true; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return float.class; }
-        @Override public Object defaultValue() { return 0.0f; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "float32";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.FLOAT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 4;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return true;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return float.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0.0f;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Float64Type() implements DType {
-        @Override public String name() { return "float64"; }
-        @Override public Kind kind() { return Kind.FLOAT; }
-        @Override public int byteSize() { return 8; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return true; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return double.class; }
-        @Override public Object defaultValue() { return 0.0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "float64";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.FLOAT;
+        }
+
+        @Override
+        public int byteSize() {
+            return 8;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return true;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return double.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0.0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Complex64Type() implements DType {
-        @Override public String name() { return "complex64"; }
-        @Override public Kind kind() { return Kind.COMPLEX; }
-        @Override public int byteSize() { return 8; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return true; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return float.class; }
-        @Override public Object defaultValue() { return 0.0f; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "complex64";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.COMPLEX;
+        }
+
+        @Override
+        public int byteSize() {
+            return 8;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return true;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return float.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0.0f;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record Complex128Type() implements DType {
-        @Override public String name() { return "complex128"; }
-        @Override public Kind kind() { return Kind.COMPLEX; }
-        @Override public int byteSize() { return 16; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return true; }
-        @Override public boolean isSigned() { return true; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return true; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return double.class; }
-        @Override public Object defaultValue() { return 0.0; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "complex128";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.COMPLEX;
+        }
+
+        @Override
+        public int byteSize() {
+            return 16;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return true;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return true;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return true;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return double.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return 0.0;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record CharType() implements DType {
-        @Override public String name() { return "char"; }
-        @Override public Kind kind() { return Kind.CHAR; }
-        @Override public int byteSize() { return 2; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return false; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return char.class; }
-        @Override public Object defaultValue() { return '\u0000'; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "char";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.CHAR;
+        }
+
+        @Override
+        public int byteSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return false;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return char.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return '\u0000';
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record StringType() implements DType {
-        @Override public String name() { return "string"; }
-        @Override public Kind kind() { return Kind.STRING; }
-        @Override public int byteSize() { return -1; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return false; }
-        @Override public boolean isBuiltin() { return true; }
-        @Override public Class<?> javaType() { return String.class; }
-        @Override public Object defaultValue() { return ""; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "string";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.STRING;
+        }
+
+        @Override
+        public int byteSize() {
+            return -1;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return false;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return true;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return String.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return "";
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     record ObjectType() implements DType {
-        @Override public String name() { return "object"; }
-        @Override public Kind kind() { return Kind.OBJECT; }
-        @Override public int byteSize() { return -1; }
-        @Override public boolean isInteger() { return false; }
-        @Override public boolean isFloat() { return false; }
-        @Override public boolean isComplex() { return false; }
-        @Override public boolean isSigned() { return false; }
-        @Override public boolean isUnsigned() { return false; }
-        @Override public boolean isNumeric() { return false; }
-        @Override public boolean isBuiltin() { return false; }
-        @Override public Class<?> javaType() { return Object.class; }
-        @Override public Object defaultValue() { return null; }
-        @Override public DType promotedWith(DType other) { return DType.promotionTable.get(this, other); }
+        @Override
+        public String name() {
+            return "object";
+        }
+
+        @Override
+        public Kind kind() {
+            return Kind.OBJECT;
+        }
+
+        @Override
+        public int byteSize() {
+            return -1;
+        }
+
+        @Override
+        public boolean isInteger() {
+            return false;
+        }
+
+        @Override
+        public boolean isFloat() {
+            return false;
+        }
+
+        @Override
+        public boolean isComplex() {
+            return false;
+        }
+
+        @Override
+        public boolean isSigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isUnsigned() {
+            return false;
+        }
+
+        @Override
+        public boolean isNumeric() {
+            return false;
+        }
+
+        @Override
+        public boolean isBuiltin() {
+            return false;
+        }
+
+        @Override
+        public Class<?> javaType() {
+            return Object.class;
+        }
+
+        @Override
+        public Object defaultValue() {
+            return null;
+        }
+
+        @Override
+        public DType promotedWith(DType other) {
+            return DType.promotionTable.get(this, other);
+        }
     }
 
     DType BOOL = new BoolType();

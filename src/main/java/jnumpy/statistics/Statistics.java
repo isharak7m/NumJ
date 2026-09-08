@@ -1,10 +1,24 @@
+/*
+ * Copyright 2026 JNumj Contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package jnumpy.statistics;
 
-import jnumpy.ndarray.NDArray;
 import jnumpy.dtype.DType;
-import jnumpy.memory.MemoryBuffer;
+import jnumpy.ndarray.NDArray;
 import jnumpy.util.Util;
-import java.util.Arrays;
 
 public final class Statistics {
 
@@ -21,7 +35,7 @@ public final class Statistics {
     public static NDArray mean(NDArray a, int... axis) {
         if (axis.length == 0) {
             double s = sum(a, 0).getDouble(0);
-            return NDArray.create(new double[]{ s / a.size() });
+            return NDArray.create(new double[] {s / a.size()});
         }
         NDArray s = sum(a, axis);
         long divisor = 1;
@@ -35,7 +49,7 @@ public final class Statistics {
         NDArray diff = ufuncOp(a, m, (x, y) -> (x - y) * (x - y));
         NDArray s = sum(diff, axis);
         if (axis.length == 0) {
-            return NDArray.create(new double[]{ s.getDouble(0) / a.size() });
+            return NDArray.create(new double[] {s.getDouble(0) / a.size()});
         }
         long divisor = 1;
         for (int ax : axis) divisor *= a.shape(ax);
@@ -87,7 +101,7 @@ public final class Statistics {
             double frac = idx - lo;
             double vlo = Util.readElement(sorted, (int) lo);
             double vhi = Util.readElement(sorted, (int) hi);
-            return NDArray.create(new double[]{ vlo + frac * (vhi - vlo) });
+            return NDArray.create(new double[] {vlo + frac * (vhi - vlo)});
         }
         int[] shape = a.shape();
         java.util.HashSet<Integer> axisSet = new java.util.HashSet<>();
@@ -97,7 +111,7 @@ public final class Statistics {
         for (int i = 0; i < shape.length; i++) {
             if (!axisSet.contains(i)) resultShape[fi++] = shape[i];
         }
-        if (resultShape.length == 0) resultShape = new int[]{ 1 };
+        if (resultShape.length == 0) resultShape = new int[] {1};
         NDArray result = NDArray.create(resultShape, DType.FLOAT64);
         int[] outIdx = new int[resultShape.length];
         for (long i = 0; i < result.size(); i++) {
@@ -133,7 +147,8 @@ public final class Statistics {
         return quantile(a, p / 100.0, axis);
     }
 
-    static NDArray reduce(NDArray a, int[] axis, String name, double identity, java.util.function.DoubleBinaryOperator op) {
+    static NDArray reduce(
+            NDArray a, int[] axis, String name, double identity, java.util.function.DoubleBinaryOperator op) {
         if (axis.length == 0) {
             double result = identity;
             int[] indices = new int[a.ndim()];
@@ -145,7 +160,7 @@ public final class Statistics {
                 }
                 result = op.applyAsDouble(result, Util.readElement(a, indices));
             }
-            return NDArray.create(new double[]{ result });
+            return NDArray.create(new double[] {result});
         }
         int[] shape = a.shape();
         java.util.HashSet<Integer> axisSet = new java.util.HashSet<>();
@@ -157,7 +172,9 @@ public final class Statistics {
                 finalShape[fi++] = shape[i];
             }
         }
-        if (finalShape.length == 0) { finalShape = new int[]{ 1 }; }
+        if (finalShape.length == 0) {
+            finalShape = new int[] {1};
+        }
         NDArray result = NDArray.create(finalShape, a.dtype());
         int[] id = new int[finalShape.length];
         for (long i = 0; i < result.size(); i++) {
@@ -199,17 +216,21 @@ public final class Statistics {
                 }
                 double val = Util.readElement(a, indices);
                 boolean better = findMax ? val > bestVal : val < bestVal;
-                if (better) { bestVal = val; bestIdx = i; }
+                if (better) {
+                    bestVal = val;
+                    bestIdx = i;
+                }
             }
-            return NDArray.create(new double[]{ bestIdx });
+            return NDArray.create(new double[] {bestIdx});
         }
         return a;
     }
 
-    private static NDArray cumulativeOp(NDArray a, int[] axis, String name, double identity, java.util.function.DoubleBinaryOperator op) {
+    private static NDArray cumulativeOp(
+            NDArray a, int[] axis, String name, double identity, java.util.function.DoubleBinaryOperator op) {
         if (axis.length == 0) {
             int n = (int) a.size();
-            NDArray result = NDArray.create(new int[]{ n }, a.dtype());
+            NDArray result = NDArray.create(new int[] {n}, a.dtype());
             double acc = identity;
             for (int i = 0; i < n; i++) {
                 acc = op.applyAsDouble(acc, Util.readBuffer(a.buffer(), a.dtype(), i));
@@ -275,7 +296,8 @@ public final class Statistics {
                 indices[d] = (int) (remaining % shape[d]);
                 remaining /= shape[d];
             }
-            Util.writeElement(result, op.applyAsDouble(Util.readElement(ba, indices), Util.readElement(bb, indices)), indices);
+            Util.writeElement(
+                    result, op.applyAsDouble(Util.readElement(ba, indices), Util.readElement(bb, indices)), indices);
         }
         return result;
     }
